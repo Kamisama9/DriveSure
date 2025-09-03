@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Login from "./components/Login";
 import Signup from "./components/SIgnup";
 import Footer from "./components/Footer";
+import FeedbackPage from "./pages/Feedback";
 
 
 function App() {
@@ -21,6 +22,8 @@ function App() {
         <Route path="/" element={<Home user={user} />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/feedback" element={<FeedbackPage />} />
+        
       </Routes>
       <Footer/>
     </Router>

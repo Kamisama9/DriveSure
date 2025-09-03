@@ -46,7 +46,6 @@
 // export default Navbar;
 
 import { useState } from 'react';
-// import logo from '../images/logo/logo.png';
 import { NavLink, Link } from 'react-router-dom';
 import { HiMiniBars3BottomRight } from 'react-icons/hi2';
 import { CgClose } from 'react-icons/cg';
