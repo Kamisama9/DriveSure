@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import { initialTickets } from "../data/initialticket";
-import TicketForm from "../components/Tickets/TicketForm";
-import TicketList from "../components/Tickets/TicketList";
+import { initialTickets } from "../../data/initialticket";
+import TicketForm from "../Tickets/TicketForm";
+import TicketList from "../Tickets/TicketList";
 
 export default function Feedback() {
   const [tickets, setTickets] = useState(initialTickets);
