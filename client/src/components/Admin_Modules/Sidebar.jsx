@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import RightArrow from "../../assets/arrows/right-arrow.png";
+import ManageRiders from './ManageRiders';
+import ManageDrivers from './ManageDrivers';
 
 const avatar = {
     "path": "/src/assets/testimonials/kickButtowski.avif",
@@ -9,7 +11,7 @@ const avatar = {
 const AdminSiderBar = () => {
   const [isManageUsersOpen, setIsManageUsersOpen] = useState(false);
   const [isVerifiyOpen, setisVerifyOpen] = useState(false);
-  const [isFeedbackOpen, setFeedback] = useState(false);
+  const [selection, setSelection] = useState(null);
 
   const toggleManageUsers = () => {
     setIsManageUsersOpen(!isManageUsersOpen);
@@ -18,10 +20,6 @@ const AdminSiderBar = () => {
    const toggleVerify = () => {
     setisVerifyOpen(!isVerifiyOpen);
   };
-
-  const renderFeedback = () => {
-    setFeedback(true);
-  }
 
   return (
     <div className="font-sans min-h-screen flex flex-col md:flex-row h-[100vh] bg-white">
@@ -49,15 +47,21 @@ const AdminSiderBar = () => {
 
           {isManageUsersOpen && (
             <div className="ml-4 bg-[#1f0a0a] rounded-md shadow-inner">
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600">
+              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
+                onClick={() => setSelection("riderBoard")}
+              >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Rider Board
               </div>
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600">
+              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
+                onClick={() => setSelection("driverBoard")}
+              >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Driver Board
               </div>
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600">
+              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
+                onClick={() => setSelection("vehicleBoard")}
+              >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Vehicles Board
               </div>
@@ -76,11 +80,15 @@ const AdminSiderBar = () => {
 
           {isVerifiyOpen && (
             <div className="ml-4 bg-[#1f0a0a] rounded-md shadow-inner">
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600">
+              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
+                onClick={() => setSelection("verifyDrivers")}
+              >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Verify Drivers 
               </div>
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600">
+              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
+                onClick={() => setSelection("verifyVehicles")}
+              >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Verify Vehicles 
               </div>
@@ -91,7 +99,7 @@ const AdminSiderBar = () => {
         {/* Feedback */}
         <div className="mt-4 text-white">
           <button
-            onClick={renderFeedback}
+            onClick={() => setSelection("feedback")}
             className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
           >
             Feedback and Grievances
@@ -101,6 +109,7 @@ const AdminSiderBar = () => {
         {/* Fare */}
         <div className="mt-4 text-white">
           <button
+            onClick={() => setSelection("fare")}
             className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
           >
             Manage Fare
@@ -110,7 +119,8 @@ const AdminSiderBar = () => {
       </aside>
 
       <main className="bg-gray-100 flex-1 p-4 md:p-6 overflow-y-auto">
-          Main
+          {selection==="riderBoard" && <ManageRiders/>}
+          {selection==="driverBoard" && <ManageDrivers/>}
       </main>
     </div>
   );
