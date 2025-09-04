@@ -1,17 +1,14 @@
 import { useState } from 'react';
 import RightArrow from "../../assets/arrows/right-arrow.png";
-import ManageRiders from './ManageRiders';
-import ManageDrivers from './ManageDrivers';
 
 const avatar = {
     "path": "/src/assets/testimonials/kickButtowski.avif",
     "name": "Kick Buttowski"
 }
 
-const AdminSiderBar = () => {
+const AdminSiderBar = ({onSelect}) => {
   const [isManageUsersOpen, setIsManageUsersOpen] = useState(false);
   const [isVerifiyOpen, setisVerifyOpen] = useState(false);
-  const [selection, setSelection] = useState(null);
 
   const toggleManageUsers = () => {
     setIsManageUsersOpen(!isManageUsersOpen);
@@ -22,8 +19,6 @@ const AdminSiderBar = () => {
   };
 
   return (
-    <div className="font-sans min-h-screen flex flex-col md:flex-row h-[100vh] bg-white">
-      {/* Sidebar */}
       <aside className="shadow-lg bg-[#140604] fixed md:static inset-y-0 left-0 z-50 transition-all duration-300 ease-in-out w-20 md:w-64 hidden md:block">
         <div className="h-[18vh] border-b">
           <img
@@ -48,19 +43,19 @@ const AdminSiderBar = () => {
           {isManageUsersOpen && (
             <div className="ml-4 bg-[#1f0a0a] rounded-md shadow-inner">
               <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
-                onClick={() => setSelection("riderBoard")}
+                onClick={() => onSelect?.("riderBoard")}
               >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Rider Board
               </div>
               <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
-                onClick={() => setSelection("driverBoard")}
+                onClick={() => onSelect?.("driverBoard")}
               >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Driver Board
               </div>
               <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
-                onClick={() => setSelection("vehicleBoard")}
+                onClick={() => onSelect?.("vehicleBoard")}
               >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Vehicles Board
@@ -81,13 +76,13 @@ const AdminSiderBar = () => {
           {isVerifiyOpen && (
             <div className="ml-4 bg-[#1f0a0a] rounded-md shadow-inner">
               <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
-                onClick={() => setSelection("verifyDrivers")}
+                onClick={() => onSelect?.("verifyDrivers")}
               >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Verify Drivers 
               </div>
               <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
-                onClick={() => setSelection("verifyVehicles")}
+                onClick={() => onSelect?.("verifyVehicles")}
               >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Verify Vehicles 
@@ -99,7 +94,7 @@ const AdminSiderBar = () => {
         {/* Feedback */}
         <div className="mt-4 text-white">
           <button
-            onClick={() => setSelection("feedback")}
+            onClick={() => onSelect?.("feedback")}
             className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
           >
             Feedback and Grievances
@@ -109,20 +104,13 @@ const AdminSiderBar = () => {
         {/* Fare */}
         <div className="mt-4 text-white">
           <button
-            onClick={() => setSelection("fare")}
+            onClick={() => onSelect?.("fare")}
             className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
           >
             Manage Fare
           </button>
         </div>
-
       </aside>
-
-      <main className="bg-gray-100 flex-1 p-4 md:p-6 overflow-y-auto">
-          {selection==="riderBoard" && <ManageRiders/>}
-          {selection==="driverBoard" && <ManageDrivers/>}
-      </main>
-    </div>
   );
 };
 

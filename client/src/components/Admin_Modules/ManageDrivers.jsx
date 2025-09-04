@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 
+const filterOptions = [
+  { label: "PAN", value: "pan_card" },
+  { label: "Aadhaar", value: "aadhar_card" },
+  { label: "Driver License", value: "driver_license" },
+];
+
 const ManageDrivers = () => {
     const [drivers, setDrivers] = useState([]);
-    const [filterType, setFilterType] = useState("pan_card");
+    const [filterType, setFilterType] = useState(filterOptions[0].value);
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const driversPerPage = 12;
+    const driversPerPage = 9;
 
     const fetchData = async () => {
         const driversRes = await fetch("http://localhost:3006/drivers");
@@ -53,25 +59,25 @@ const ManageDrivers = () => {
   const totalPages = Math.ceil(drivers.length / driversPerPage);
 
   return (
-    <div className="p-4">
-      {/* Filter UI */}
-      <div className="flex items-center gap-2 mb-4">
+    <div className="p-4 flex flex-col h-full min-h-[500px] relative pb-20">
+      {/* Filter UI - keep as is */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          className="px-3 py-2 rounded bg-gray-300 text-gray-700"
+          className="px-3 py-2 rounded bg-gray-300 text-gray-700 border border-gray-300 hover:border-black focus:border-black focus:outline-none transition"
         >
-          <option value="pan card">PAN</option>
-          <option value="aadhar card">Aadhaar</option>
-          <option value="driver license">Driver License</option>
+          {filterOptions.map(opt => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
         </select>
 
         <input
           type="text"
-          placeholder={`Search by ${filterType}`}
+          placeholder={`Search by ${filterOptions.find(opt => opt.value === filterType)?.label}`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-4 py-2 rounded w-full bg-white text-black placeholder-gray-400"
+          className="px-4 py-2 rounded flex-grow bg-white text-black placeholder-gray-400 border border-gray-300 hover:border-black focus:border-black focus:outline-none transition"
         />
 
         <button
@@ -82,30 +88,32 @@ const ManageDrivers = () => {
         </button>
       </div>
 
-      {/* Results */}
-      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Results - fixed height cards */}
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 flex-grow">
         {currentDrivers.map((driver) => (
-          <li key={driver.id} className="p-4 border rounded bg-white shadow text-black">
-            <h3 className="font-bold text-lg mb-1">{driver.full_name}</h3>
-            <p><strong>License:</strong> {driver.driver_license}</p>
-            <p><strong>Expiry:</strong> {driver.driver_license_expiry}</p>
-            <p><strong>PAN:</strong> {driver.pan_card}</p>
-            <p><strong>Aadhaar:</strong> {driver.aadhar_card}</p>
+          <li key={driver.id} className="p-3 border rounded bg-white shadow text-black text-sm h-[140px] flex flex-col cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+            <h3 className="font-bold text-base truncate">{driver.full_name}</h3>
+            <div className="grid grid-cols-1 gap-y-0.5 mt-1">
+              <p className="truncate"><span className="font-medium">License:</span> {driver.driver_license}</p>
+              <p className="truncate"><span className="font-medium">Expiry:</span> {driver.driver_license_expiry}</p>
+              <p className="truncate"><span className="font-medium">PAN:</span> {driver.pan_card}</p>
+              <p className="truncate"><span className="font-medium">Aadhaar:</span> {driver.aadhar_card}</p>
+            </div>
           </li>
         ))}
       </ul>
 
-      {/* Pagination */}
+      {/* Pagination Controls - Fixed at bottom with gray background */}
       {totalPages > 1 && (
-        <div className="flex justify-center mt-4 space-x-2">
+        <div className="flex justify-center space-x-2 fixed bottom-0 left-50 right-0 py-4 z-10 bg-gray-100 overflow-x-auto">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 rounded ${
+              className={`px-3 py-1 rounded min-w-[2rem] ${
                 currentPage === i + 1
                   ? "bg-red-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-300"
               }`}
             >
               {i + 1}
