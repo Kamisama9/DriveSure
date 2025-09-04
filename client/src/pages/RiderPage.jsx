@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Booking from "../components/Rider_Modules/Booking";
 import Sidebar from "../components/Sidebar/sidebar";
 
-import Feedback from '../components/RiderModules/Feedback';
+// import Feedback from '../components/RiderModules/Feedback';
 // import Cab from '../components/RiderModules/Cab';
 
 
