@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { bookings } from "../../data/booking";
 
@@ -52,4 +53,3 @@ export default function Booking() {
     </div>
   );
 }
-
