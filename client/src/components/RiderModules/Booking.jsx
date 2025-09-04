@@ -1,25 +1,54 @@
+import { useState } from "react";
+import { bookings } from "../../data/booking";
 
 export default function Booking() {
-  return (
-    <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold text-gray-800">Welcome Back, John Doe!</h1>
-        <p className="text-gray-600">Here's what's happening with your account today.</p>
-      </header>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card title="Total Orders" value="12" color="text-green-600" />
-        <Card title="Pending Orders" value="3" color="text-yellow-600" />
-        <Card title="Total Spent" value="$500.00" color="text-blue-600" />
-      </div>
-    </div>
-  );
-}
+  const [searchTerm, setSearchTerm] = useState("");
 
-function Card({ title, value, color }) {
+  const filteredBookings = bookings.filter((booking) =>
+    booking.pickup.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    booking.dropoff.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    booking.booking_status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    booking.payment_status.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md">
-      <h2 className="text-lg font-semibold text-gray-700">{title}</h2>
-      <p className={`text-2xl font-bold ${color}`}>{value}</p>
+    <div className="space-y-4">
+      {/* Search Bar */}
+      <input
+        type="text"
+        placeholder="Search by pickup, dropoff, status..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full p-2 border text-black border-black rounded-md"
+      />
+
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white  border border-gray-200 rounded-md">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="text-left p-2 border-b text-black">Pickup</th>
+              <th className="text-left p-2 border-b text-black">Dropoff</th>
+              <th className="text-left p-2 border-b text-black">Status</th>
+              <th className="text-left p-2 border-b text-black">Payment</th>
+              <th className="text-left p-2 border-b text-black">Fare</th>
+              <th className="text-left p-2 border-b text-black">Distance</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredBookings.map((booking) => (
+              <tr key={booking.id} className="hover:bg-gray-50">
+                <td className="p-2 border-b text-black">{booking.pickup}</td>
+                <td className="p-2 border-b text-black">{booking.dropoff}</td>
+                <td className="p-2 border-b capitalize text-black">{booking.booking_status}</td>
+                <td className="p-2 border-b capitalize text-black">{booking.payment_status}</td>
+                <td className="p-2 border-b text-black">{booking.fare ? `$${booking.fare}` : "N/A"}</td>
+                <td className="p-2 border-b text-black">{booking.distance ? `${booking.distance} km` : "N/A"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
