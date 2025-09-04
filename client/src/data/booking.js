@@ -1,4 +1,4 @@
-[
+export const bookings=[
     {
         "id": "249259b5-08ff-4911-a3d7-8b187c407fea",
         "pickup": "123 Main Street",
