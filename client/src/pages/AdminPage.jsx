@@ -16,9 +16,9 @@ const AdminPage=()=>{
     const [activeSection, setActiveSection] = useState('dashboard');
     return (
     <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} navItems={adminNavItems}>
-      {activeSection === 'dashboard' && <Booking />}
-      {activeSection === 'orders' && <Feedback />}
-      {activeSection === 'profile' && <Profile />}
+      {activeSection === 'manageRider' && <Booking />}
+      {activeSection === 'manageDriver' && <Feedback />}
+      {activeSection === 'verifyDriver' && <Profile />}
     </Sidebar>
     )
 }
