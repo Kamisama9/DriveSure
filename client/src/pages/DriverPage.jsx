@@ -12,16 +12,19 @@ const driverNavItems = [
   { id: 'account', label: 'Manage Account', icon: '⚙️' },
 ];
 
+const DriverPage = () => {
+  const [activeSection, setActiveSection] = useState('bookings');
 
-const DriverPage=()=>{
-    const [activeSection, setActiveSection] = useState('dashboard');
-    return (
+  return (
     <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} navItems={driverNavItems}>
-      {activeSection === 'dashboard' && <DriverBooking />}
-      {activeSection === 'orders' && <Feedback />}
-      {activeSection === 'profile' && <Profile />}
+      {activeSection === 'bookings' && <DriverBooking />}
+      {activeSection === 'vehicles' && <ManageVehicles />}
+      {activeSection === 'liveBookings' && <LiveBookings />}
+      {activeSection === 'feedback' && <Feedback />}
+      {activeSection === 'verification' && <Verification />}
+      {activeSection === 'account' && <ManageAccount />}
     </Sidebar>
-    )
-}
+  );
+};
 
 export default DriverPage;
