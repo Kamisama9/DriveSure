@@ -3,7 +3,7 @@ import { initialTickets } from "../../data/initialticket";
 import TicketForm from "../Tickets/TicketForm";
 import TicketList from "../Tickets/TicketList";
 
-export default function Feedback() {
+const Feedback = () => {
   const [tickets, setTickets] = useState(initialTickets);
   const [tab, setTab] = useState("OPEN"); 
 
@@ -64,3 +64,5 @@ export default function Feedback() {
     </div>
   );
 }
+
+export default Feedback;

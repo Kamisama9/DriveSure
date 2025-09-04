@@ -1,5 +1,4 @@
-
-export default function Booking() {
+const Booking = () => {
   return (
     <div className="space-y-6">
       <header>
@@ -15,7 +14,7 @@ export default function Booking() {
   );
 }
 
-function Card({ title, value, color }) {
+const Card = ({ title, value, color }) => {
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
       <h2 className="text-lg font-semibold text-gray-700">{title}</h2>
@@ -23,3 +22,5 @@ function Card({ title, value, color }) {
     </div>
   );
 }
+
+export default Booking;
