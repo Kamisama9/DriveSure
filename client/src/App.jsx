@@ -3,6 +3,8 @@ import LandingPage from "./pages/LandingPage"
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import RiderPage from "./pages/RiderPage";
+import DriverPage from "./pages/DriverPage";
+import AdminPage from "./pages/AdminPage";
 
 const App = () => {
   return(
@@ -13,6 +15,8 @@ const App = () => {
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<Signup/>} />
         <Route path="/rider" element={<RiderPage/>}/>
+        <Route path="/driver" element={<DriverPage/>}/>
+        <Route path="/admin" element={<AdminPage/>}/>
       </Routes>
     </Router>
     </>

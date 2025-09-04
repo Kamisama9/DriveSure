@@ -1,12 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-const navItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
-  { id: 'orders', label: 'Orders', icon: '📦' },
-  { id: 'profile', label: 'Profile', icon: '👤' },
-];
-
-export default function Sidebar({ children, activeSection, setActiveSection }) {
+export default function Sidebar({ children, activeSection, setActiveSection, navItems }) {
   const [openSidebar, setOpenSidebar] = useState(false);
 
   return (
@@ -19,14 +13,12 @@ export default function Sidebar({ children, activeSection, setActiveSection }) {
       >
         <div className="p-4 flex items-center justify-between border-b">
           <h1
-            className={`text-xl font-bold text-green-600 transition-opacity duration-300 ${
-              openSidebar ? 'opacity-100' : 'opacity-0 hidden md:block'
-            }`}
+            className={`text-xl font-bold text-red-600 transition-opacity duration-300`}
           >
             E-Commerce
           </h1>
-          <button onClick={() => setOpenSidebar(!openSidebar)} className="md:hidden p-2 rounded-full hover:bg-gray-200">
-            ☰
+          <button onClick={() => setOpenSidebar(!openSidebar)} className="md:hidden p-2 rounded-full text-black hover:bg-black"> 
+            
           </button>
         </div>
         <nav className="py-4">
@@ -44,9 +36,7 @@ export default function Sidebar({ children, activeSection, setActiveSection }) {
                 >
                   <span className="text-gray-600">{item.icon}</span>
                   <span
-                    className={`text-gray-700 transition-opacity duration-300 ${
-                      openSidebar ? 'block opacity-100' : 'hidden opacity-0 md:block'
-                    }`}
+                    className={`text-gray-700 transition-opacity duration-300 `}
                   >
                     {item.label}
                   </span>
@@ -61,9 +51,9 @@ export default function Sidebar({ children, activeSection, setActiveSection }) {
       <main className="flex-1 p-4 md:p-6 overflow-y-auto">
         {/* Mobile Header */}
         <div className="md:hidden flex justify-between items-center mb-4">
-          <h1 className="text-xl font-bold text-gray-800">E-Commerce</h1>
-          <button onClick={() => setOpenSidebar((prev) => !prev)} className="p-2 rounded-full hover:bg-gray-200">
-            ☰
+          <h1 className="text-xl font-bold text-red-600">E-Commerce</h1>
+          <button onClick={() => setOpenSidebar((prev) => !prev)} className="p-2 rounded-full text-black hover:bg-gray-200">
+            {openSidebar ? '←':'☰'}
           </button>
         </div>
 
