@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import HeroBg from "../assets/hero/hero-bg.png";
 import useStore from "../store/store.js";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
 	const [name, setName] = useState("");
@@ -10,6 +11,64 @@ function Login() {
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [role, setRole] = useState("");
 	const { mode, setMode } = useStore();
+	const navigate = useNavigate();
+
+	const login = async (e) => {
+		e.preventDefault();
+		if (!email || !password) {
+			alert("Please enter both email and password.");
+			return;
+		}
+
+		try {
+			const res = await axios.post("http://localhost:3000/login", {
+				email,
+				password,
+			});
+
+			if (res.data?.user) {
+				console.log("Login successful:", res.data);
+				navigate("/rider");
+			} else {
+				alert("Login failed. Please check your credentials.");
+			}
+		} catch (err) {
+			console.error("Login error:", err);
+			alert("An error occurred during login.");
+		}
+	};
+
+	const signup = async (e) => {
+		e.preventDefault();
+		if (!name || !email || !password || !confirmPassword || !role) {
+			alert("All fields are required.");
+			return;
+		}
+
+		if (password !== confirmPassword) {
+			alert("Passwords do not match.");
+			return;
+		}
+
+		try {
+			const res = await axios.post("http://localhost:3000/signup", {
+				name,
+				email,
+				password,
+				role,
+			});
+
+			if (res.data?.userId) {
+				console.log("Signup successful:", res.data);
+				navigate("/rider");
+			} else {
+				alert("Signup failed.");
+			}
+		} catch (err) {
+			console.error("Signup error:", err);
+			alert("An error occurred during signup.");
+		}
+	};
 
 	return (
 		<div
@@ -27,26 +86,26 @@ function Login() {
 				</h1>
 				<form className="flex gap-3 flex-col mt-5 min-w-100">
 					<input
-						type="text"
+						type="email"
 						placeholder="Enter email"
 						className="w-full p-2 border text-white rounded-md mb-2 bg-transparent"
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 					/>
 					<input
-						type="text"
+						type="password"
 						placeholder="Enter password"
 						className="w-full p-2 border text-white rounded-md bg-transparent"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 					/>
 
-					<Link
-						to="/cab"
+					<button
+						onClick={login}
 						className="primary-btn-nav mt-5 flex justify-center items-center w-50"
 					>
 						Login
-					</Link>
+					</button>
 				</form>
 				<p className="text-white mt-4">
 					Don't have an account?
@@ -76,21 +135,21 @@ function Login() {
 						onChange={(e) => setName(e.target.value)}
 					/>
 					<input
-						type="text"
+						type="email"
 						placeholder="Enter email"
 						className="w-full p-2 border text-white rounded-md mb-2 bg-transparent"
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 					/>
 					<input
-						type="text"
+						type="password"
 						placeholder="Enter password"
 						className="w-full p-2 border text-white rounded-md bg-transparent"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 					/>
 					<input
-						type="text"
+						type="password"
 						placeholder="Enter confirm password"
 						className="w-full p-2 border text-white rounded-md bg-transparent"
 						value={confirmPassword}
@@ -108,12 +167,12 @@ function Login() {
 						<option value="driver">Driver</option>
 					</select>
 
-					<Link
-						to="/cab"
+					<button
+						onClick={signup}
 						className="primary-btn-nav mt-5 flex justify-center items-center w-50"
 					>
 						Sign Up
-					</Link>
+					</button>
 				</form>
 				<p className="text-white mt-4">
 					Already have an account?
