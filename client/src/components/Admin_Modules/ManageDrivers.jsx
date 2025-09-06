@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import DriverCards from "./DriverCards";
 
 const filterOptions = [
   { label: "PAN", value: "pan_card" },
@@ -7,40 +8,51 @@ const filterOptions = [
 ];
 
 const ManageDrivers = () => {
-    const [drivers, setDrivers] = useState([]);
-    const [filterType, setFilterType] = useState(filterOptions[0].value);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [currentPage, setCurrentPage] = useState(1);
-    const driversPerPage = 9;
+  const [selectedDriver, setSelectedDriver] = useState(null);
+  const openDriver = (driver) => setSelectedDriver(driver);
+  const closeDriver = () => setSelectedDriver("");
+  const [drivers, setDrivers] = useState([]);
+  const [filterType, setFilterType] = useState(filterOptions[0].value);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const driversPerPage = 9;
 
-    const fetchData = async () => {
-        const driversRes = await fetch("http://localhost:3006/drivers");
-        const driversData = await driversRes.json();
+  useEffect(() => {
+    if (selectedDriver) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => (document.body.style.overflow = prev);
+    }
+  }, [selectedDriver]);
 
-        const enrichedDrivers = await Promise.all(
-            driversData.map(async (driver) => {
-            const userRes = await fetch(`http://localhost:3006/users/${driver.user_id}`);
-            const userData = await userRes.json();
+  const fetchData = async () => {
+    const driversRes = await fetch("http://localhost:3006/drivers");
+    const driversData = await driversRes.json();
 
-            return {
-                ...driver,
-                full_name: `${userData.first_name} ${userData.middle_name || ""} ${userData.last_name}`.trim(),
-                email: userData.email,
-                phone_number: userData.phone_number
-            };
-            })
+    const enrichedDrivers = await Promise.all(
+      driversData.map(async (driver) => {
+        const userRes = await fetch(`http://localhost:3006/users/${driver.user_id}`);
+        const userData = await userRes.json();
+
+        return {
+          ...driver,
+          full_name: `${userData.first_name} ${userData.middle_name || ""} ${userData.last_name}`.trim(),
+          email: userData.email,
+          phone_number: userData.phone_number
+        };
+      })
+    );
+
+    const filteredDrivers =
+      searchTerm.trim() === ""
+        ? enrichedDrivers
+        : enrichedDrivers.filter((driver) =>
+          driver[filterType]?.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
-        const filteredDrivers =
-            searchTerm.trim() === ""
-            ? enrichedDrivers
-            : enrichedDrivers.filter((driver) =>
-                driver[filterType]?.toLowerCase().includes(searchTerm.toLowerCase())
-                );
-
-        setDrivers(filteredDrivers);
-        setCurrentPage(1);
-    };
+    setDrivers(filteredDrivers);
+    setCurrentPage(1);
+  };
 
   useEffect(() => {
     fetchData();
@@ -60,7 +72,7 @@ const ManageDrivers = () => {
 
   return (
     <div className="p-4 flex flex-col h-full min-h-[500px] relative pb-20">
-      {/* Filter UI - keep as is */}
+      {/* Filter UI */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <select
           value={filterType}
@@ -89,9 +101,9 @@ const ManageDrivers = () => {
       </div>
 
       {/* Results - fixed height cards */}
-      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 flex-grow">
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7 gap-y-8 flex">
         {currentDrivers.map((driver) => (
-          <li key={driver.id} className="p-3 border rounded bg-white shadow text-black text-sm h-[140px] flex flex-col cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+          <li key={driver.id} onClick={() => openDriver(driver)} className="p-3 border rounded bg-white shadow text-black text-sm h-[140px] flex flex-col cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
             <h3 className="font-bold text-base truncate">{driver.full_name}</h3>
             <div className="grid grid-cols-1 gap-y-0.5 mt-1">
               <p className="truncate"><span className="font-medium">License:</span> {driver.driver_license}</p>
@@ -110,17 +122,21 @@ const ManageDrivers = () => {
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 rounded min-w-[2rem] ${
-                currentPage === i + 1
-                  ? "bg-red-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-300"
-              }`}
+              className={`px-3 py-1 rounded min-w-[2rem] ${currentPage === i + 1
+                ? "bg-red-600 text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-300"
+                }`}
             >
               {i + 1}
             </button>
           ))}
         </div>
       )}
+
+      {selectedDriver && (
+        <DriverCards Driver={selectedDriver} onClose={closeDriver} />
+      )}
+
     </div>
   );
 };

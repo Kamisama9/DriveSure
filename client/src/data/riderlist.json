@@ -14,9 +14,9 @@
       "is_phone_verified": true,
       "role": "rider",
       "role_description": "Regular rider",
-      "status": "active",
-      "created_at": "2025-09-01T10:00:00Z",
-      "updated_at": "2025-09-01T10:00:00Z"
+      "status": "suspended",
+      "created_at": "2025-09-01 10:00:00",
+      "updated_at": "2025-09-05 10:46:31.831"
     },
     {
       "id": "b2c3d4e5-f6a7-8901-bcde-2345678901bc",
@@ -32,9 +32,9 @@
       "is_phone_verified": true,
       "role": "driver",
       "role_description": "Cab driver",
-      "status": "suspended",
-      "created_at": "2025-08-25T14:30:00Z",
-      "updated_at": "2025-09-04T21:58:02.635Z"
+      "status": "active",
+      "created_at": "2025-08-25 14:30:00",
+      "updated_at": "2025-09-05 03:53:00.807"
     },
     {
       "id": "c3d4e5f6-a7b8-9012-cdef-3456789012cd",
@@ -51,8 +51,8 @@
       "role": "admin",
       "role_description": "System administrator",
       "status": "active",
-      "created_at": "2025-07-15T09:00:00Z",
-      "updated_at": "2025-07-15T09:00:00Z"
+      "created_at": "2025-07-15 09:00:00",
+      "updated_at": "2025-07-15 09:00:00"
     },
     {
       "id": "d4e5f6a7-b8c9-0123-def0-4567890123de",
@@ -69,8 +69,8 @@
       "role": "rider",
       "role_description": "Occasional rider",
       "status": "suspended",
-      "created_at": "2025-06-10T11:45:00Z",
-      "updated_at": "2025-06-10T11:45:00Z"
+      "created_at": "2025-06-10 11:45:00",
+      "updated_at": "2025-06-10 11:45:00"
     },
     {
       "id": "e5f6a7b8-c9d0-1234-ef01-5678901234ef",
@@ -87,8 +87,8 @@
       "role": "driver",
       "role_description": "Bike driver",
       "status": "active",
-      "created_at": "2025-05-20T08:20:00Z",
-      "updated_at": "2025-05-20T08:20:00Z"
+      "created_at": "2025-05-20 08:20:00",
+      "updated_at": "2025-05-20 08:20:00"
     },
     {
       "id": "f6a7b8c9-d0e1-2345-f012-6789012345f0",
@@ -105,8 +105,8 @@
       "role": "rider",
       "role_description": "Frequent rider",
       "status": "suspended",
-      "created_at": "2025-04-18T16:00:00Z",
-      "updated_at": "2025-09-04T21:49:18.752Z"
+      "created_at": "2025-04-18 16:00:00",
+      "updated_at": "2025-09-04 21:49:18.752"
     },
     {
       "id": "a7b8c9d0-e1f2-3456-0123-789012345601",
@@ -123,8 +123,8 @@
       "role": "driver",
       "role_description": "Auto driver",
       "status": "active",
-      "created_at": "2025-03-12T13:15:00Z",
-      "updated_at": "2025-03-12T13:15:00Z"
+      "created_at": "2025-03-12 13:15:00",
+      "updated_at": "2025-03-12 13:15:00"
     },
     {
       "id": "b8c9d0e1-f2a3-4567-1234-890123456712",
@@ -141,8 +141,8 @@
       "role": "rider",
       "role_description": "New user",
       "status": "deleted",
-      "created_at": "2025-02-05T07:30:00Z",
-      "updated_at": "2025-02-05T07:30:00Z"
+      "created_at": "2025-02-05 07:30:00",
+      "updated_at": "2025-02-05 07:30:00"
     },
     {
       "id": "c9d0e1f2-a3b4-5678-2345-901234567823",
@@ -159,8 +159,8 @@
       "role": "admin",
       "role_description": "Support admin",
       "status": "active",
-      "created_at": "2025-01-10T12:00:00Z",
-      "updated_at": "2025-01-10T12:00:00Z"
+      "created_at": "2025-01-10 12:00:00",
+      "updated_at": "2025-01-10 12:00:00"
     },
     {
       "id": "d0e1f2a3-b4c5-6789-3456-012345678934",
@@ -176,9 +176,9 @@
       "is_phone_verified": true,
       "role": "driver",
       "role_description": "Taxi driver",
-      "status": "active",
-      "created_at": "2024-12-20T18:45:00Z",
-      "updated_at": "2025-09-04T21:42:55.375Z"
+      "status": "suspended",
+      "created_at": "2024-12-20 18:45:00",
+      "updated_at": "2025-09-05 04:28:01.996"
     }
   ]
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatDateSafe, toMySQLFromDate } from './DateUtil';
 
 const RiderCards = ({ rider, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -7,7 +8,9 @@ const RiderCards = ({ rider, onClose }) => {
     city: "",
     state: "",
     role_description: "",
-    status: "active"
+    status: "active",
+    created_at: "",
+    updated_at: ""
   });
 
   useEffect(() => {
@@ -17,7 +20,9 @@ const RiderCards = ({ rider, onClose }) => {
         city: rider.city || "",
         state: rider.state || "",
         role_description: rider.role_description || "",
-        status: rider.status || "active"
+        status: rider.status || "active",
+        created_at: rider.created_at || "",
+        updated_at: rider.updated_at || ""
       });
     }
   }, [rider]);
@@ -36,6 +41,7 @@ const RiderCards = ({ rider, onClose }) => {
 
   const handleUpdate = async () => {
     try {
+      const updatedAtMySQL = toMySQLFromDate(new Date(), { asUTC: true, withMs: true });
       const response = await fetch(`http://localhost:3005/riders/${rider.id}`, {
         method: 'PUT',
         headers: {
@@ -43,15 +49,20 @@ const RiderCards = ({ rider, onClose }) => {
         },
         body: JSON.stringify({
           ...rider,
-          ...formData,
-          updated_at: new Date().toISOString()
+          phone_number: formData.phone_number,
+          city: formData.city,
+          state: formData.state,
+          role_description: formData.role_description,
+          status: formData.status,
+          created_at: formData.created_at,
+          updated_at: updatedAtMySQL
         }),
       });
 
       if (response.ok) {
         alert('Rider updated successfully!');
         setIsEditing(false);
-        // onClose();
+        setFormData(prev => ({ ...prev, updated_at: updatedAtMySQL }));
       } else {
         alert('Failed to update rider');
       }
@@ -70,7 +81,7 @@ const RiderCards = ({ rider, onClose }) => {
 
         if (response.ok) {
           alert('Rider deleted successfully!');
-        //   onClose();
+          //   onClose();
         } else {
           alert('Failed to delete rider');
         }
@@ -103,10 +114,6 @@ const RiderCards = ({ rider, onClose }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             {/* Fixed Fields */}
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <label className="block text-sm font-medium text-gray-600 mb-1">ID</label>
-              <div className="text-gray-900 text-sm">{rider.id}</div>
-            </div>
 
             <div className="bg-gray-50 p-3 rounded-lg">
               <label className="block text-sm font-medium text-gray-600 mb-1">Email (Fixed)</label>
@@ -209,12 +216,11 @@ const RiderCards = ({ rider, onClose }) => {
                 </select>
               ) : (
                 <div className="text-gray-900 text-sm">
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    formData.status === 'active' ? 'bg-green-100 text-green-800' :
+                  <span className={`px-2 py-1 rounded-full text-xs ${formData.status === 'active' ? 'bg-green-100 text-green-800' :
                     formData.status === 'suspended' ? 'bg-yellow-100 text-yellow-800' :
-                    formData.status === 'deleted' ? 'bg-red-100 text-red-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
+                      formData.status === 'deleted' ? 'bg-red-100 text-red-800' :
+                        'bg-gray-100 text-gray-800'
+                    }`}>
                     {formData.status}
                   </span>
                 </div>
@@ -224,9 +230,8 @@ const RiderCards = ({ rider, onClose }) => {
             <div className="bg-gray-50 p-3 rounded-lg">
               <label className="block text-sm font-medium text-gray-600 mb-1">Email Verified</label>
               <div className="text-gray-900 text-sm">
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  formData.is_email_verified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
+                <span className={`px-2 py-1 rounded-full text-xs ${formData.is_email_verified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
                   {formData.is_email_verified ? 'Verified' : 'Not Verified'}
                 </span>
               </div>
@@ -235,9 +240,8 @@ const RiderCards = ({ rider, onClose }) => {
             <div className="bg-gray-50 p-3 rounded-lg">
               <label className="block text-sm font-medium text-gray-600 mb-1">Phone Verified</label>
               <div className="text-gray-900 text-sm">
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  formData.is_phone_verified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
+                <span className={`px-2 py-1 rounded-full text-xs ${formData.is_phone_verified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
                   {formData.is_phone_verified ? 'Verified' : 'Not Verified'}
                 </span>
               </div>
@@ -245,14 +249,32 @@ const RiderCards = ({ rider, onClose }) => {
 
             <div className="bg-gray-50 p-3 rounded-lg">
               <label className="block text-sm font-medium text-gray-600 mb-1">Created At</label>
-              <div className="text-gray-900 text-sm">{new Date(formData.created_at).toLocaleDateString()}</div>
+              <div className="text-gray-900 text-sm">
+                {formatDateSafe(formData.created_at, {
+                  locale: 'en-IN',
+                  timeZone: 'Asia/Kolkata',
+                  variant: 'datetime',
+                  fallback: '—',
+                  assumeUTCForMySQL: true,
+                })}
+              </div>
             </div>
 
             <div className="bg-gray-50 p-3 rounded-lg">
               <label className="block text-sm font-medium text-gray-600 mb-1">Updated At</label>
-              <div className="text-gray-900 text-sm">{new Date(formData.updated_at).toLocaleDateString()}</div>
+              <div className="text-gray-900 text-sm">
+                {formatDateSafe(formData?.updated_at, {
+                  locale: 'en-IN',
+                  timeZone: 'Asia/Kolkata',
+                  variant: 'datetime',
+                  fallback: '—',
+                  assumeUTCForMySQL: true,
+                })}
+              </div>
             </div>
+
           </div>
+
 
           {/* Action Buttons */}
           <div className="flex justify-center space-x-4">

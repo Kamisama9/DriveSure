@@ -54,12 +54,6 @@ const AdminSiderBar = ({onSelect}) => {
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Driver Board
               </div>
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
-                onClick={() => onSelect?.("vehicleBoard")}
-              >
-                <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
-                Vehicles Board
-              </div>
             </div>
           )}
         </div>

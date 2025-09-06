@@ -87,7 +87,7 @@ const ManageRiders = () => {
     </div>
 
     {/* Results */}
-    <ul className="space-y-2 flex-grow">
+    <ul className="space-y-7 flex-grow">
         {currentRiders.map((rider) => (
           <li
             key={rider.id}
