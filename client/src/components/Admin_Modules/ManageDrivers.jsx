@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import DriverCards from "./DriverCards";
 
 const filterOptions = [
@@ -25,7 +25,8 @@ const ManageDrivers = () => {
     }
   }, [selectedDriver]);
 
-  const fetchData = async () => {
+
+  const fetchData = useCallback(async () => {
     const driversRes = await fetch("http://localhost:3006/drivers");
     const driversData = await driversRes.json();
 
@@ -52,17 +53,12 @@ const ManageDrivers = () => {
 
     setDrivers(filteredDrivers);
     setCurrentPage(1);
-  };
+  }, [searchTerm, filterType]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  useEffect(() => {
-    if (searchTerm.trim() === "") {
-      fetchData();
-    }
-  }, [searchTerm]);
 
   // Pagination
   const indexOfLastDriver = currentPage * driversPerPage;
@@ -101,7 +97,7 @@ const ManageDrivers = () => {
       </div>
 
       {/* Results - fixed height cards */}
-      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7 gap-y-8 flex">
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7 gap-y-8">
         {currentDrivers.map((driver) => (
           <li key={driver.id} onClick={() => openDriver(driver)} className="p-3 border rounded bg-white shadow text-black text-sm h-[140px] flex flex-col cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
             <h3 className="font-bold text-base truncate">{driver.full_name}</h3>
@@ -117,7 +113,7 @@ const ManageDrivers = () => {
 
       {/* Pagination Controls - Fixed at bottom with gray background */}
       {totalPages > 1 && (
-        <div className="flex justify-center space-x-2 fixed bottom-0 left-50 right-0 py-4 z-10 bg-gray-100 overflow-x-auto">
+        <div className="flex justify-center space-x-2 fixed bottom-0 left-0 right-0 py-4 z-10 bg-gray-100 overflow-x-auto">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i}

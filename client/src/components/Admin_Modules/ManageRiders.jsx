@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback} from "react";
 import RiderCards from "./RiderCards";
 
 const filterOptions = [
@@ -14,7 +14,7 @@ const ManageRiders = () => {
     const [filterType, setFilterType] = useState(filterOptions[0].value);
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const ridersPerPage = 5;
+    const ridersPerPage = 7;
 
     useEffect(() => {
       if (selectedRider) {
@@ -24,31 +24,25 @@ const ManageRiders = () => {
       }
     }, [selectedRider]);
 
-    const fetchRiders = async () => {
-        const response = await fetch("http://localhost:3005/riders");
-        const data = await response.json();
 
-        if (searchTerm.trim() === "") {
-        setRiders(data);
-        } else {
-        const filtered = data.filter((rider) =>
-            rider[filterType]?.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setRiders(filtered);
-        }
-        setCurrentPage(1); 
-    };
+  const fetchRiders = useCallback(async () => {
+    const response = await fetch("http://localhost:3005/riders");
+    const data = await response.json();
 
-    useEffect(() => {
-        fetchRiders();
-    }, []);
+    if (searchTerm.trim() === "") {
+      setRiders(data);
+    } else {
+      const filtered = data.filter((rider) =>
+        rider[filterType]?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setRiders(filtered);
+    }
+    setCurrentPage(1);
+  }, [searchTerm, filterType]);
 
-    
-    useEffect(() => {
-        if (searchTerm.trim() === "") {
-            fetchRiders();
-        }
-    }, [searchTerm]);
+  useEffect(() => {
+    fetchRiders();
+  }, [fetchRiders]);
 
   // Pagination logic
   const indexOfLastRider = currentPage * ridersPerPage;
@@ -57,7 +51,7 @@ const ManageRiders = () => {
   const totalPages = Math.ceil(riders.length / ridersPerPage);
 
   return (
-  <div className="p-4 flex flex-col h-full min-h-[500px] relative pb-20">
+  <div className="p-4 flex flex-col h-full min-h-[500px] pb-20 no-scrollbar relative">
     {/* Filter UI */}
     <div className="flex flex-wrap items-center gap-2 mb-4">
       <select
@@ -87,7 +81,7 @@ const ManageRiders = () => {
     </div>
 
     {/* Results */}
-    <ul className="space-y-7 flex-grow">
+    <ul className="space-y-7 flex-grow pb-20">
         {currentRiders.map((rider) => (
           <li
             key={rider.id}
@@ -114,7 +108,7 @@ const ManageRiders = () => {
 
     {/* Pagination Controls - Fixed at bottom with gray background */}
     {totalPages > 1 && (
-      <div className="flex justify-center space-x-2 fixed bottom-0 left-50 right-0 py-4 z-10 bg-gray-100 overflow-x-auto">
+      <div className="flex justify-center space-x-2 fixed bottom-0 left-0 right-0 py-4 z-10 bg-gray-100 overflow-x-auto">
         {Array.from({ length: totalPages }, (_, i) => (
           <button
             key={i}

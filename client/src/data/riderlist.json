@@ -104,9 +104,9 @@
       "is_phone_verified": true,
       "role": "rider",
       "role_description": "Frequent rider",
-      "status": "suspended",
+      "status": "active",
       "created_at": "2025-04-18 16:00:00",
-      "updated_at": "2025-09-04 21:49:18.752"
+      "updated_at": "2025-09-06 10:31:27.959"
     },
     {
       "id": "a7b8c9d0-e1f2-3456-0123-789012345601",
