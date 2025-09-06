@@ -12,8 +12,8 @@ const App = () => {
 				<Route path="/" element={<LandingPage />} />
 				<Route path="/auth" element={<Login />} />
 				<Route path="/rider" element={<RiderPage />} />
-        <Route path="/driver" element={<DriverPage/>}/>
-        <Route path="/admin" element={<AdminPage/>}/>
+        		<Route path="/driver" element={<DriverPage/>}/>
+       		 	<Route path="/admin" element={<AdminPage/>}/>
 			</Routes>
 		</Router>
 	);
