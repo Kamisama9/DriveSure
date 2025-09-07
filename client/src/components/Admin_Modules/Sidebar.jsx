@@ -6,10 +6,9 @@ const avatar = {
     "name": "Kick Buttowski"
 }
 
-const AdminSiderBar = () => {
+const AdminSiderBar = ({onSelect}) => {
   const [isManageUsersOpen, setIsManageUsersOpen] = useState(false);
   const [isVerifiyOpen, setisVerifyOpen] = useState(false);
-  const [isFeedbackOpen, setFeedback] = useState(false);
 
   const toggleManageUsers = () => {
     setIsManageUsersOpen(!isManageUsersOpen);
@@ -19,13 +18,7 @@ const AdminSiderBar = () => {
     setisVerifyOpen(!isVerifiyOpen);
   };
 
-  const renderFeedback = () => {
-    setFeedback(true);
-  }
-
   return (
-    <div className="font-sans min-h-screen flex flex-col md:flex-row h-[100vh] bg-white">
-      {/* Sidebar */}
       <aside className="shadow-lg bg-[#140604] fixed md:static inset-y-0 left-0 z-50 transition-all duration-300 ease-in-out w-20 md:w-64 hidden md:block">
         <div className="h-[18vh] border-b">
           <img
@@ -49,17 +42,17 @@ const AdminSiderBar = () => {
 
           {isManageUsersOpen && (
             <div className="ml-4 bg-[#1f0a0a] rounded-md shadow-inner">
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600">
+              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
+                onClick={() => onSelect?.("riderBoard")}
+              >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Rider Board
               </div>
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600">
+              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
+                onClick={() => onSelect?.("driverBoard")}
+              >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Driver Board
-              </div>
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600">
-                <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
-                Vehicles Board
               </div>
             </div>
           )}
@@ -76,11 +69,15 @@ const AdminSiderBar = () => {
 
           {isVerifiyOpen && (
             <div className="ml-4 bg-[#1f0a0a] rounded-md shadow-inner">
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600">
+              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
+                onClick={() => onSelect?.("verifyDrivers")}
+              >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Verify Drivers 
               </div>
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600">
+              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
+                onClick={() => onSelect?.("verifyVehicles")}
+              >
                 <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
                 Verify Vehicles 
               </div>
@@ -91,7 +88,7 @@ const AdminSiderBar = () => {
         {/* Feedback */}
         <div className="mt-4 text-white">
           <button
-            onClick={renderFeedback}
+            onClick={() => onSelect?.("feedback")}
             className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
           >
             Feedback and Grievances
@@ -101,18 +98,13 @@ const AdminSiderBar = () => {
         {/* Fare */}
         <div className="mt-4 text-white">
           <button
+            onClick={() => onSelect?.("fare")}
             className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
           >
             Manage Fare
           </button>
         </div>
-
       </aside>
-
-      <main className="bg-gray-100 flex-1 p-4 md:p-6 overflow-y-auto">
-          Main
-      </main>
-    </div>
   );
 };
 
