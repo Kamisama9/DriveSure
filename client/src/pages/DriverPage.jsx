@@ -1,6 +1,6 @@
 import { useState } from "react";
 import DriverBooking from "../components/Driver_Modules/DriverBookings";
-import Sidebar from "../components/Sidebar/sidebar";
+import Sidebar from "../components/Sidebar/Sidebar";
 
 
 const driverNavItems = [

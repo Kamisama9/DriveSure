@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "/logo-zoom.png";
 import useStore from "../../store/store";
 
@@ -24,6 +24,7 @@ const Navbar = () => {
 				</a>
 
 				<div className="flex items-center gap-3">
+				<Link to= "/booking">
 					<button
 						className="
               cursor-pointer px-6 py-2
@@ -36,6 +37,7 @@ const Navbar = () => {
 					>
 						Book a Nomad Cab
 					</button>
+					</Link>
 
 					<p
 						onClick={() => go("login")}
