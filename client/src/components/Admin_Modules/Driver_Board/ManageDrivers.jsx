@@ -113,7 +113,7 @@ const ManageDrivers = () => {
 
       {/* Pagination Controls - Fixed at bottom with gray background */}
       {totalPages > 1 && (
-        <div className="flex justify-center space-x-2 fixed bottom-0 left-0 right-0 py-4 z-10 bg-gray-100 overflow-x-auto">
+        <div className="flex justify-center space-x-2 fixed bottom-0 left-50 right-0 py-4 z-10 bg-gray-100 overflow-x-auto">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i}
