@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { formatDateSafe } from "./DateUtil";
+import { formatDateSafe } from "../Utils/DateUtil";
 
 const VehicleCards = ({ ownerId, onClose }) => {
   const [vehicles, setVehicles] = useState([]);
@@ -24,7 +24,12 @@ const VehicleCards = ({ ownerId, onClose }) => {
         const payload = await res.json();
         const list = Array.isArray(payload) ? payload : payload?.vehicles ?? [];
 
-        const filtered = list.filter((v) => s(v.owner_id) === s(ownerId));
+        const filtered = list.filter((v) => 
+          s(v.owner_id) === s(ownerId) && 
+          v.is_rc_verified === true && 
+          v.is_puc_verified === true && 
+          v.is_insurance_verified === true
+        );
         setVehicles(filtered);
       } catch (err) {
         if (err.name !== "AbortError") {

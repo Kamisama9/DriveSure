@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { formatDateSafe, toMySQLFromDate } from "./DateUtil";
-import VehicleCards from './VehicleCards';
+import { formatDateSafe, toMySQLFromDate } from "../Utils/DateUtil";
+import VehicleCards from "./VehicleCards";
 
 const DriverCards = ({ Driver, onClose }) => {
     const [isEditing, setIsEditing] = useState(false);

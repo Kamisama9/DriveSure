@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import RiderPage from "./pages/RiderPage";
 import DriverPage from "./pages/DriverPage";
 import AdminPage from "./pages/AdminPage";
+import BookingPage from "./pages/BookingPage";
 import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes";
 import axios from "axios";
 import useStore from "./store/store";
@@ -57,7 +58,7 @@ const App = () => {
           }
         />
         <Route path="/admin" element={<AdminPage />} />
-
+        <Route path="/booking" element = {<BookingPage/>}/>
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
     </Router>

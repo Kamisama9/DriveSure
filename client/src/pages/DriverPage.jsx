@@ -1,15 +1,22 @@
 // src/pages/DriverPage.jsx
 import { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import useStore from "../store/store.js";
 import Sidebar from "../components/Sidebar/Sidebar";
 import DriverTrips from "../components/Driver_Modules/Trips.jsx";
+import DriverBooking from "../components/Driver_Modules/DriverBookings";
+
+
 
 const driverNavItems = [
-  { id: "dashboard", label: "Dashboard", icon: "📊" },
-  { id: "trips", label: "My Trips", icon: "🚗" },
-  { id: "account", label: "Account", icon: "⚙️" },
+ { id: 'bookings', label: 'My Bookings', icon: '📖' },
+  { id: 'vehicles', label: 'Manage Vehicles', icon: '🚗' },
+  { id: 'liveBookings', label: 'Live Bookings', icon: '📡' },
+  { id: 'feedback', label: 'Feedback & Grievances', icon: '💬' },
+  { id: 'verification', label: 'Verification', icon: '✅' },
+  { id: 'account', label: 'Manage Account', icon: '⚙️' },
 ];
 
 export default function DriverPage() {
@@ -43,9 +50,12 @@ export default function DriverPage() {
         </button>
       </div>
 
-      {activeSection === "dashboard" && <div>Driver Dashboard</div>}
-      {activeSection === "trips" && <DriverTrips />}
-      {activeSection === "account" && <div>Driver Account</div>}
+     {activeSection === 'bookings' && <DriverBooking />}
+      {activeSection === 'vehicles' && <ManageVehicles />}
+      {activeSection === 'liveBookings' && <LiveBookings />}
+      {activeSection === 'feedback' && <Feedback />}
+      {activeSection === 'verification' && <Verification />}
+      {activeSection === 'account' && <ManageAccount />}
     </Sidebar>
   );
 }
