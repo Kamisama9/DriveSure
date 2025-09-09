@@ -8,14 +8,8 @@ const avatar = {
 
 const AdminSiderBar = ({onSelect}) => {
   const [isManageUsersOpen, setIsManageUsersOpen] = useState(false);
-  const [isVerifiyOpen, setisVerifyOpen] = useState(false);
-
   const toggleManageUsers = () => {
     setIsManageUsersOpen(!isManageUsersOpen);
-  };
-
-   const toggleVerify = () => {
-    setisVerifyOpen(!isVerifiyOpen);
   };
 
   return (
@@ -37,7 +31,7 @@ const AdminSiderBar = ({onSelect}) => {
             onClick={toggleManageUsers}
             className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
           >
-            Manage Users
+            User's Board
           </button>
 
           {isManageUsersOpen && (
@@ -61,28 +55,11 @@ const AdminSiderBar = ({onSelect}) => {
         {/* Manage Users Section */}
         <div className="mt-4 text-white">
           <button
-            onClick={toggleVerify}
+            onClick={() => onSelect?.("Verification")}
             className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
           >
             Manage Verifications
           </button>
-
-          {isVerifiyOpen && (
-            <div className="ml-4 bg-[#1f0a0a] rounded-md shadow-inner">
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
-                onClick={() => onSelect?.("verifyDrivers")}
-              >
-                <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
-                Verify Drivers 
-              </div>
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
-                onClick={() => onSelect?.("verifyVehicles")}
-              >
-                <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
-                Verify Vehicles 
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Feedback */}
@@ -101,7 +78,7 @@ const AdminSiderBar = ({onSelect}) => {
             onClick={() => onSelect?.("fare")}
             className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
           >
-            Manage Fare
+            Fare Board
           </button>
         </div>
       </aside>

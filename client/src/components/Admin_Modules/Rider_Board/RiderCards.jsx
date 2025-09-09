@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { formatDateSafe, toMySQLFromDate } from './DateUtil';
+import { formatDateSafe, toMySQLFromDate } from '../Utils/DateUtil';
 
 const RiderCards = ({ rider, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
