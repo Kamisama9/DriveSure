@@ -12,16 +12,63 @@ export default function Booking() {
     booking.payment_status.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  
+
+
+
+
   return (
     <div className="space-y-4">
-      {/* Search Bar */}
+       <div className="flex flex-wrap items-center gap-2 mb-4">
+        {/* Status Filter */}
+        <label htmlFor="statusFilter" className="text-sm text-gray-600">
+          Status
+        </label>
+        <select
+          id="statusFilter"
+          // value={statusFilter}
+          // onChange={(e) => setStatusFilter(e.target.value)}
+          className="px-2 py-2 rounded bg-gray-300 text-gray-700 border border-gray-300 hover:border-black focus:border-black focus:outline-none transition"
+        >
+          {/* {statusOptions.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt === "all" ? "All" : opt.replace(/_/g, " ")}
+            </option>
+          ))} */}
+        </select>
+
+        {/* Payment Filter */}
+        <label htmlFor="paymentFilter" className="text-sm text-gray-600">
+          Payment
+        </label>
+        <select
+          id="paymentFilter"
+          // value={paymentFilter}
+          // onChange={(e) => setPaymentFilter(e.target.value)}
+          className="px-2 py-2 rounded bg-gray-300 text-gray-700 border border-gray-300 hover:border-black focus:border-black focus:outline-none transition"
+        >
+          {/* {paymentOptions.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt === "all" ? "All" : opt.replace(/_/g, " ")}
+            </option> */}
+          {/* ))} */}
+        </select>
+
       <input
         type="text"
-        placeholder="Search by pickup, dropoff, status..."
+        // placeholder={`Search by ${filterOptions.find(opt => opt.value === filterType)?.label}`}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full p-2 border text-black border-black rounded-md"
+        className="px-4 py-2 rounded flex-grow bg-white text-black placeholder-gray-400 border border-gray-300 hover:border-black focus:border-black focus:outline-none transition"
       />
+
+      <button
+        // onClick={fetchRiders}
+        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300"
+      >
+        Search
+      </button>
+    </div>
 
       {/* Table */}
       <div className="overflow-x-auto">
