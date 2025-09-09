@@ -1,4 +1,4 @@
-import { testimonials_list } from '../../data/testimonials';
+import { testimonials_list } from "../../data/testimonials";
 
 const Testimonials = () => {
   const looped = [...testimonials_list, ...testimonials_list];
@@ -6,14 +6,14 @@ const Testimonials = () => {
   return (
     <section className="bg-[#ff510008] py-20 mt-10">
       <div className="cont grid gap-12">
-
         <div className="text-center flex flex-col justify-center items-center">
           <h1 className="Normal font-semibold">Reviewed by People</h1>
           <h1 className="Heading font-bold">Client&apos;s Testimonials</h1>
           <p className="Paragraph text-[#8f8e8b] md:w-[50rem] mt-5">
-            Discover the positive impact we've made on our clients by reading through their testimonials.
-            Our clients have experienced our service and results, and they're eager to share their positive
-            experiences with you.
+            Discover the positive impact we've made on our clients by reading
+            through their testimonials. Our clients have experienced our service
+            and results, and they're eager to share their positive experiences
+            with you.
           </p>
         </div>
 
@@ -48,7 +48,7 @@ const Testimonials = () => {
                       <img
                         src={item.image_path}
                         className="rounded-[50%] w-[70px] h-[70px] object-cover"
-                        alt={item?.name || 'Client'}
+                        alt={item?.name || "Client"}
                         loading="lazy"
                       />
                       <div>
@@ -66,7 +66,6 @@ const Testimonials = () => {
             </ul>
           </div>
         </div>
-
       </div>
     </section>
   );

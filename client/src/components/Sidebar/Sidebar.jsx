@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState } from "react";
+
 
 export default function Sidebar({ children, activeSection, setActiveSection, navItems }) {
 
@@ -6,6 +7,7 @@ export default function Sidebar({ children, activeSection, setActiveSection, nav
     "path": "/src/assets/testimonials/kickButtowski.avif",
     "name": "Kick Buttowski"
 }
+
   const [openSidebar, setOpenSidebar] = useState(false);
 
   return (
@@ -13,8 +15,8 @@ export default function Sidebar({ children, activeSection, setActiveSection, nav
       {/* Sidebar */}
       <aside
         className={`shadow-lg bg-[#140604] fixed md:static inset-y-0 left-0 z-50 transition-all duration-300 ease-in-out ${
-          openSidebar ? 'w-64' : 'w-20 md:w-64'
-        } ${!openSidebar && 'hidden md:block'}`}
+          openSidebar ? "w-64" : "w-20 md:w-64"
+        } ${!openSidebar && "hidden md:block"}`}
       >
         <div className="p-4 flex flex-col items-center justify-between border-b">
           <img
@@ -39,6 +41,7 @@ export default function Sidebar({ children, activeSection, setActiveSection, nav
                   }}
                   className={`flex items-center space-x-3 px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600 w-full rounded-lg transition-colors ${
                     activeSection === item.id ? 'bg-black' : ''
+
                   }`}
                 >
                   <span
@@ -57,9 +60,11 @@ export default function Sidebar({ children, activeSection, setActiveSection, nav
       <main className=" bg-gray-100 flex-1 p-4 md:p-6 overflow-y-auto">
         {/* Mobile Header */}
         <div className="md:hidden flex justify-between items-center mb-4">
+
           <h1 className="text-xl font-bold text-red-600">Nomad Cabs</h1>
           <button onClick={() => setOpenSidebar((prev) => !prev)} className="p-2 rounded-full text-black hover:bg-gray-200">
             {openSidebar ? '←':'☰'}
+
           </button>
         </div>
 
