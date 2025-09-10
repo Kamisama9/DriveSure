@@ -1,5 +1,7 @@
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import useStore from "../../store/store";
 
 export default function Sidebar({ children, activeSection, setActiveSection, navItems }) {
 
@@ -7,6 +9,22 @@ export default function Sidebar({ children, activeSection, setActiveSection, nav
     "path": "/src/assets/testimonials/kickButtowski.avif",
     "name": "Kick Buttowski"
 }
+
+
+const navigate = useNavigate();
+  const setUser = useStore((s) => s.setUser);
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${BASE_URL}/auth/logout`); // calls your server’s /logout
+      setUser(null); // clear client state
+      navigate("/auth"); // send back to login
+    } catch (err) {
+      console.error("Logout failed", err);
+      alert("Logout failed");
+    }
+  };
 
   const [openSidebar, setOpenSidebar] = useState(false);
 
@@ -30,6 +48,7 @@ export default function Sidebar({ children, activeSection, setActiveSection, nav
           <button onClick={() => setOpenSidebar(!openSidebar)} className="md:hidden p-2 rounded-full text-black hover:bg-black"> 
           </button>
         </div>
+        <div >
         <nav className="py-4">
           <ul className="space-y-2">
             {navItems.map((item) => (
@@ -54,6 +73,15 @@ export default function Sidebar({ children, activeSection, setActiveSection, nav
             ))}
           </ul>
         </nav>
+        <div className="flex flex-col items-start ml-3">
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 bg-red-600 text-white rounded"
+        >
+          Logout
+        </button>
+      </div>
+        </div>
       </aside>
 
       {/* Main Content */}

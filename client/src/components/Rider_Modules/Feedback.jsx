@@ -33,7 +33,7 @@ const Feedback = () => {
 
       <main className="mx-auto max-w-5xl p-4 space-y-6">
         <section>
-          <h2 className="text-lg font-semibold mb-3">Add Ticket</h2>
+          <h2 className="text-lg font-semibold mb-3 text-black">Add Ticket</h2>
           <TicketForm onAdd={handleAdd} />
         </section>
         
@@ -45,7 +45,7 @@ const Feedback = () => {
                 onClick={() => setTab(t.key)}
                 className={`rounded-lg border px-3 py-1.5 text-sm ${
                   tab === t.key
-                    ? "bg-[#ff4d31] text-white border-[#ff4d31]"
+                    ? "bg-[#ff4d31] text-black border-[#ff4d31]"
                     : "bg-[#fffaf6] text-[#ff4d31] hover:bg-gray-50"
                 }`}
               >

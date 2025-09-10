@@ -1,16 +1,11 @@
 // pages/booking.jsx
-
 import Booking from "../components/Booking/Booking";
 
-
-
-export default function BookingPage() {
-  return( 
-
+const BookingPage = () => {
+  return (
     <div>
-   
-  <Booking />
-  
-  </div>
+      <Booking />
+    </div>
   );
 }
+export default BookingPage;

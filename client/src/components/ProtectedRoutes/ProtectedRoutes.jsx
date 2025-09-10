@@ -1,7 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import useStore from "../../store/store";
-
-export default function ProtectedRoute({ children }) {
+const ProtectedRoute = ({ children }) => {
   const user = useStore((s) => s.user);
 
   if (!user) {
@@ -13,3 +12,4 @@ export default function ProtectedRoute({ children }) {
     return children;
   }
 }
+export default ProtectedRoute;

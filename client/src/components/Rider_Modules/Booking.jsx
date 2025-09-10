@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { bookings } from "../../data/booking";
 
-export default function Booking() {
+const Booking = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredBookings = bookings.filter((booking) =>
@@ -98,3 +98,4 @@ export default function Booking() {
     </div>
   );
 }
+export default Booking;

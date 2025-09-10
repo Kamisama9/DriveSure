@@ -1,6 +1,6 @@
 import TicketCard from "./TicketCard"
 
-export default function TicketList({ tickets, onClose }) {
+const TicketList = ({ tickets, onClose }) => {
   if (tickets.length === 0) {
     return (
       <div className="rounded-xl border border-dashed p-8 text-center text-gray-500">
@@ -17,3 +17,4 @@ export default function TicketList({ tickets, onClose }) {
     </div>
   );
 }
+export default TicketList;

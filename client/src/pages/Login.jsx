@@ -6,9 +6,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = "http://localhost:3000";
+const BASE_URL=import.meta.env.VITE_BASE_URL;
+axios.defaults.baseURL =`${BASE_URL}`;
 
-function Login() {
+const Login=()=> {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

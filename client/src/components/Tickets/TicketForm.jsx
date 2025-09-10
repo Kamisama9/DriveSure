@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const priorities = ["LOW", "MEDIUM", "HIGH"];
 
-export default function TicketForm({ onAdd }) {
+const TicketForm = ({ onAdd }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("MEDIUM");
@@ -33,9 +33,9 @@ export default function TicketForm({ onAdd }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 rounded-xl p-5 shadow-sm border">
       <div>
-        <label className="block text-sm font-medium">Title *</label>
+        <label className="block text-sm font-medium text-black">Title *</label>
         <input
-          className="mt-1 w-full rounded-lg border-gray-300"
+          className="mt-1 w-full rounded-lg text-black border-gray-300"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Short summary"
@@ -44,9 +44,9 @@ export default function TicketForm({ onAdd }) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium ">Description</label>
+        <label className="block text-sm font-medium text-black">Description</label>
         <textarea
-          className="mt-1 w-full rounded-lg border-gray-300"
+          className="mt-1 w-full rounded-lg text-black border-gray-300"
           rows={3}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -56,9 +56,9 @@ export default function TicketForm({ onAdd }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium ">Priority</label>
+          <label className="block text-sm font-medium text-black">Priority</label>
           <select
-            className="mt-1 w-full bg-[#151212] rounded-lg"
+            className="mt-1 w-full bg-gray-100 text-black rounded-lg"
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
           >
@@ -69,9 +69,9 @@ export default function TicketForm({ onAdd }) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Requester *</label>
+          <label className="block text-sm font-medium text-black">Requester *</label>
           <input
-            className="mt-1 w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 w-full rounded-lg text-black border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             value={requester}
             onChange={(e) => setRequester(e.target.value)}
             placeholder=" email or name"
@@ -91,3 +91,4 @@ export default function TicketForm({ onAdd }) {
     </form>
   );
 }
+export default TicketForm;

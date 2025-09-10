@@ -18,8 +18,7 @@ const driverNavItems = [
   { id: 'verification', label: 'Verification', icon: '✅' },
   { id: 'account', label: 'Manage Account', icon: '⚙️' },
 ];
-
-export default function DriverPage() {
+const DriverPage = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
   const navigate = useNavigate();
   const setUser = useStore((s) => s.setUser);
@@ -59,3 +58,5 @@ export default function DriverPage() {
     </Sidebar>
   );
 }
+
+export default DriverPage;

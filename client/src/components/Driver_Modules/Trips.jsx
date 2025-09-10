@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function DriverTrips() {
+const DriverTrips = () => {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,3 +62,4 @@ export default function DriverTrips() {
     </div>
   );
 }
+export default DriverTrips;

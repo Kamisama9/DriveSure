@@ -13,7 +13,7 @@ function StatusBadge({ status }) {
   );
 }
 
-export default function TicketCard({ ticket, onClose }) {
+const TicketCard = ({ ticket, onClose }) =>{
   const created = new Date(ticket.createdAt).toLocaleString();
 
   return (
@@ -21,7 +21,7 @@ export default function TicketCard({ ticket, onClose }) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-semibold ">
+            <h3 className="text-base font-semibold text-black">
               {ticket.title}
             </h3>
             <StatusBadge status={ticket.status} />
@@ -52,3 +52,4 @@ export default function TicketCard({ ticket, onClose }) {
     </div>
   );
 }
+export default TicketCard;
