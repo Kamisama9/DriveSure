@@ -1,4 +1,5 @@
-export const bookings=[
+{
+    "bookings": [
     {
         "id": "249259b5-08ff-4911-a3d7-8b187c407fea",
         "pickup": "123 Main Street",
@@ -75,3 +76,4 @@ export const bookings=[
         "updated_at": "2025-09-04T05:33:48.721448"
     }
 ]
+}

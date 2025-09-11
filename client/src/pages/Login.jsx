@@ -1,5 +1,5 @@
 // Login.jsx
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import HeroBg from "../assets/hero/hero-bg.png";
 import useStore from "../store/store.js";
 import axios from "axios";
