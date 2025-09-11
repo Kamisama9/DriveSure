@@ -3,6 +3,7 @@ import Booking from "../components/Rider_Modules/Booking";
 import Sidebar from "../components/Sidebar/Sidebar";
 import Feedback from "../components/Rider_Modules/Feedback"
 import Cab from "../components/Rider_Modules/Cab";
+import ManageAccount from "../components/Rider_Modules/ManageAccount";
 
 const riderNavItems = [
   { id: "myBooking", label: "My Bookings", icon: "📖" },
@@ -22,7 +23,7 @@ const RiderPage = () => {
       {activeSection === "myBooking" && <Booking />}
       {activeSection === "bookCab" && <Cab />}
       {activeSection === "grievances" && <Feedback />}
-      {activeSection === "account" && <Profile />}
+      {activeSection === "account" && <ManageAccount />}
     </Sidebar>
   );
 };
