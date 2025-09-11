@@ -4,6 +4,8 @@ import { bookings } from "../../data/booking";
 
 const Booking = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [modal,openModal]=useState(false);
+
 
   const filteredBookings = bookings.filter((booking) =>
     booking.pickup.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -17,6 +19,7 @@ const Booking = () => {
 
   return (
     <div className="space-y-4">
+      <div className={`${modal ? "opacity-50 pointer-events-none" : ""}`}>
        <div className="flex flex-wrap items-center gap-2 mb-4">
         {/* Status Filter */}
         <label htmlFor="statusFilter" className="text-sm text-gray-600">
@@ -83,7 +86,7 @@ const Booking = () => {
           </thead>
           <tbody>
             {filteredBookings.map((booking) => (
-              <tr key={booking.id} className="hover:bg-gray-50">
+              <tr key={booking.id} className="hover:bg-gray-50" onClick={()=>openModal(true)}>
                 <td className="p-2 border-b text-black">{booking.pickup}</td>
                 <td className="p-2 border-b text-black">{booking.dropoff}</td>
                 <td className="p-2 border-b capitalize text-black">{booking.booking_status}</td>
@@ -94,7 +97,22 @@ const Booking = () => {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
+      {
+        modal&&<div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded shadow-lg w-96">
+          <h2 className="text-xl font-bold mb-4 text-black">Booking Details</h2>
+          <p className="text-black">More details about the booking will go here.</p>
+          <button
+            onClick={() => openModal(false)}
+            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+      }
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 axios.defaults.withCredentials = true;
 const BASE_URL=import.meta.env.VITE_BASE_URL;
+console.log("Base URL:", BASE_URL);
 axios.defaults.baseURL =`${BASE_URL}`;
 
 const Login=()=> {
