@@ -19,29 +19,23 @@ const ManageAccount = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Fetch user details from API
-    // Simulating API call with dummy data
-    setTimeout(() => {
-      setUserDetails({
-        id: "36f1c25b-1458-4c58-8d11-f9776d6fc3b5",
-        email: "john.doe@example.com",
-        phone_number: "+91 98765 43210",
-        name: "John Doe",
-        city: "Mumbai",
-        state: "Maharashtra",
-        is_email_verified: true,
-        is_phone_verified: true,
-        role: "rider",
-        status: "active",
-        created_at: "2025-09-01",
-      });
-      setLoading(false);
-    }, 1000);
+    const fetchUserDetails=async() =>{
+      try {
+        const response = await fetch('http://localhost:3005/riders');
+        const data=await response.json();
+        setLoading(true);
+        setUserDetails(data[0]);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    }
+    fetchUserDetails().finally(() => setLoading(false));  
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // TODO: Implement update logic
+    userDetails.status = "Pending Verification";
     setIsEditing(false);
   };
 
