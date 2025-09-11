@@ -2,6 +2,7 @@ import { useState } from "react";
 import Booking from "../components/Rider_Modules/Booking";
 import Sidebar from "../components/Sidebar/Sidebar";
 import Feedback from "../components/Rider_Modules/Feedback"
+import Cab from "../components/Rider_Modules/Cab";
 
 const riderNavItems = [
   { id: "myBooking", label: "My Bookings", icon: "📖" },

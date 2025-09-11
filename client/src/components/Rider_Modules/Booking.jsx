@@ -24,7 +24,6 @@ const Booking = () => {
     fetchBookings();
   }, []);
 
-  //cors error fix
   useEffect(() => {
     if (modal) {
       const prev = document.body.style.overflow;
