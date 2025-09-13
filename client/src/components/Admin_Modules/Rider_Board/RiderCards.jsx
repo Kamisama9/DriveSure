@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { formatDateSafe, toMySQLFromDate } from '../Utils/DateUtil';
+import { toast, Bounce } from 'react-toastify';
 
-const RiderCards = ({ rider, onClose }) => {
+const RiderCards = ({ rider, onClose, onRefresh }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     phone_number: "",
@@ -60,35 +61,142 @@ const RiderCards = ({ rider, onClose }) => {
       });
 
       if (response.ok) {
-        alert('Rider updated successfully!');
+        toast.success('Rider updated successfully!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          transition: Bounce,
+        });
         setIsEditing(false);
         setFormData(prev => ({ ...prev, updated_at: updatedAtMySQL }));
+        if (onRefresh) onRefresh();
       } else {
-        alert('Failed to update rider');
+        toast.error('Failed to update rider', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          transition: Bounce,
+        });
       }
     } catch (error) {
       console.error('Error updating rider:', error);
-      alert('Error updating rider');
+      toast.error('Error updating rider', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        transition: Bounce,
+      });
     }
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this rider?')) {
-      try {
-        const response = await fetch(`http://localhost:3005/riders/${rider.id}`, {
-          method: 'DELETE',
-        });
-
-        if (response.ok) {
-          alert('Rider deleted successfully!');
-          //   onClose();
-        } else {
-          alert('Failed to delete rider');
+    const confirmDelete = new Promise((resolve) => {
+      toast.warn(
+        ({ closeToast }) => (
+          <div className="flex items-start gap-3">
+            <div className="flex-1">
+              <p className="mb-3">Are you sure you want to delete this rider?</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    closeToast();
+                    resolve(true);
+                  }}
+                  className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 hover:shadow-lg transition-all duration-200"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => {
+                    closeToast();
+                    resolve(false);
+                  }}
+                  className="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600 hover:shadow-lg transition-all duration-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        ),
+        {
+          position: "top-center",
+          autoClose: false,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: false,
+          closeButton: false,
+          theme: "light",
+          transition: Bounce,
+          style: {
+            alignItems: 'flex-start'
+          }
         }
-      } catch (error) {
-        console.error('Error deleting rider:', error);
-        alert('Error deleting rider');
+      );
+    });
+
+    const shouldDelete = await confirmDelete;
+    if (!shouldDelete) return;
+
+    try {
+      const response = await fetch(`http://localhost:3005/riders/${rider.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        toast.error('Failed to delete rider', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        return;
       }
+
+      toast.success('Rider deleted successfully!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
+      if (onRefresh) {
+        onRefresh();
+      }
+      onClose();
+    } catch (error) {
+      console.error('Error deleting rider:', error);
+      toast.error('Error deleting rider', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 
@@ -102,12 +210,24 @@ const RiderCards = ({ rider, onClose }) => {
         onClick={stop}
       >
         <div className="p-6">
-          <button
+          {/* <button
             aria-label="Close"
             onClick={onClose}
             className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl"
           >
             ✕
+          </button> */}
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={onClose}
+            className="absolute top-3 right-3 z-50 inline-flex items-center justify-center
+                            h-11 w-11 rounded-full cursor-pointer
+                            text-gray-600 hover:text-blue-700 hover:bg-gray-100
+                            ring-2 ring-transparent ring-offset-white
+                            transition-colors duration-150 ease-out"
+          >
+            <span className="pointer-events-none text-2xl leading-none text-black">x</span>
           </button>
 
           <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Rider Details</h2>
@@ -116,7 +236,7 @@ const RiderCards = ({ rider, onClose }) => {
             {/* Fixed Fields */}
 
             <div className="bg-gray-50 p-3 rounded-lg">
-              <label className="block text-sm font-medium text-gray-600 mb-1">Email (Fixed)</label>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
               <div className="text-gray-900 text-sm">{rider.email}</div>
             </div>
 
@@ -212,7 +332,6 @@ const RiderCards = ({ rider, onClose }) => {
                 >
                   <option value="active">Active</option>
                   <option value="suspended">Suspended</option>
-                  <option value="deleted">Deleted</option>
                 </select>
               ) : (
                 <div className="text-gray-900 text-sm">
@@ -284,7 +403,7 @@ const RiderCards = ({ rider, onClose }) => {
                   onClick={handleUpdate}
                   className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition duration-300"
                 >
-                  Save Changes
+                  Save
                 </button>
                 <button
                   onClick={() => setIsEditing(false)}
@@ -299,7 +418,7 @@ const RiderCards = ({ rider, onClose }) => {
                   onClick={() => setIsEditing(true)}
                   className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300"
                 >
-                  Update
+                  Edit
                 </button>
                 <button
                   onClick={handleDelete}

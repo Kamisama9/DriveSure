@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
+import { toast, Bounce } from "react-toastify";
 import { formatDateSafe, toMySQLFromDate } from "../Utils/DateUtil";
 import VehicleCards from "./VehicleCards";
 
-const DriverCards = ({ Driver, onClose }) => {
+const DriverCards = ({ Driver, onClose, onRefresh }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [user, setUser] = useState(null);
     const [userLoading, setUserLoading] = useState(false);
     const [userError, setUserError] = useState(null);
     const [showVehicles, setShowVehicles] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const [driverMeta, setDriverMeta] = useState({
         id: "",
@@ -128,7 +130,17 @@ const DriverCards = ({ Driver, onClose }) => {
             });
 
             if (!res.ok) {
-                alert("Failed to update user");
+                toast.error("Failed to update user", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
                 return;
             }
 
@@ -136,17 +148,89 @@ const DriverCards = ({ Driver, onClose }) => {
             setUser(updatedUser);
             setFormData((prev) => ({ ...prev, updated_at: updatedAtMySQL }));
             setIsEditing(false);
-            alert("Driver (user profile) updated successfully!");
+            toast.success("Driver profile updated successfully!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
         } catch (error) {
             console.error("Error updating user:", error);
-            alert("Error updating user");
+            toast.error("Error updating user", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
         }
     };
 
     // Delete the driver record (KYC) only
     const handleDelete = async () => {
         if (!Driver?.id) return;
-        if (!window.confirm("Are you sure you want to delete this driver?")) return;
+        
+        setIsDeleting(true);
+        
+        const confirmDelete = new Promise((resolve) => {
+            toast.warn(
+                ({ closeToast }) => (
+                    <div className="flex items-start gap-3">
+                        <div className="flex-1">
+                            <p className="mb-3">Are you sure you want to delete this driver?</p>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => {
+                                        closeToast();
+                                        resolve(true);
+                                    }}
+                                    className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 hover:shadow-lg transition-colors duration-200"
+                                >
+                                    Delete
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        closeToast();
+                                        resolve(false);
+                                    }}
+                                    className="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600 hover:shadow-lg transition-colors duration-200"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ),
+                {
+                    position: "top-center",
+                    autoClose: false,
+                    hideProgressBar: true,
+                    closeOnClick: false,
+                    pauseOnHover: false,
+                    draggable: false,
+                    closeButton: false,
+                    theme: "light",
+                    transition: Bounce,
+                    style: {
+                        alignItems: 'flex-start'
+                    }
+                }
+            );
+        });
+
+        const shouldDelete = await confirmDelete;
+        setIsDeleting(false);
+        
+        if (!shouldDelete) return;
 
         try {
             const res = await fetch(`http://localhost:3006/drivers/${Driver.id}`, {
@@ -154,15 +238,49 @@ const DriverCards = ({ Driver, onClose }) => {
             });
 
             if (!res.ok) {
-                alert("Failed to delete driver");
+                toast.error("Failed to delete driver", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
                 return;
             }
 
-            alert("Driver deleted successfully!");
+            toast.success("Driver deleted successfully!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
+            
+            if (onRefresh) {
+                onRefresh();
+            }
             onClose?.();
         } catch (error) {
             console.error("Error deleting driver:", error);
-            alert("Error deleting driver");
+            toast.error("Error deleting driver", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
         }
     };
 
@@ -183,13 +301,13 @@ const DriverCards = ({ Driver, onClose }) => {
                             type="button"
                             aria-label="Close"
                             onClick={onClose}
-                            className="absolute top-3 right-3 z-50 inline-flex items-center justify-center
+                            className="absolute top-9 right-3 z-50 inline-flex items-center justify-center
                             h-11 w-11 rounded-full cursor-pointer
                             text-gray-600 hover:text-blue-700 hover:bg-gray-100
                             ring-2 ring-transparent ring-offset-white
                             transition-colors duration-150 ease-out"
                         >
-                            <span className="pointer-events-none text-2xl leading-none">✕</span>
+                            <span className="pointer-events-none text-2xl leading-none text-black">x</span>
                         </button>
                     }
 
@@ -452,7 +570,6 @@ const DriverCards = ({ Driver, onClose }) => {
                                             >
                                                 <option value="active">Active</option>
                                                 <option value="suspended">Suspended</option>
-                                                <option value="deleted">Deleted</option>
                                             </select>
                                         ) : (
                                             <div className="text-gray-900 text-sm">
@@ -476,7 +593,7 @@ const DriverCards = ({ Driver, onClose }) => {
                                 {/* Actions */}
                                 <div className="flex justify-between items-center mt-4">
 
-                                    {!isEditing && (
+                                    {!isEditing && !isDeleting && (
                                         <button
                                             type="button"
                                             onClick={() => setShowVehicles(true)}
@@ -491,26 +608,39 @@ const DriverCards = ({ Driver, onClose }) => {
                                     <div className="flex gap-3">
                                         <button
                                             onClick={() => setIsEditing((v) => !v)}
-                                            className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-gray-800"
+                                            disabled={isDeleting}
+                                            className={`px-4 py-2 rounded ${
+                                                isDeleting 
+                                                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                                    : "bg-gray-200 hover:bg-gray-300 text-gray-800"
+                                            }`}
                                         >
                                             {isEditing ? "Cancel" : "Edit"}
                                         </button>
                                         <button
                                             onClick={handleUpdate}
-                                            disabled={!isEditing}
-                                            className={`px-4 py-2 rounded text-white ${isEditing
-                                                ? "bg-indigo-600 hover:bg-indigo-700"
-                                                : "bg-indigo-300 cursor-not-allowed"
-                                                }`}
+                                            disabled={!isEditing || isDeleting}
+                                            className={`px-4 py-2 rounded text-white ${
+                                                isEditing && !isDeleting
+                                                    ? "bg-indigo-600 hover:bg-indigo-700"
+                                                    : "bg-indigo-300 cursor-not-allowed"
+                                            }`}
                                         >
                                             Save
                                         </button>
-                                        <button
-                                            onClick={handleDelete}
-                                            className="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white"
-                                        >
-                                            Delete
-                                        </button>
+                                        {isEditing && (
+                                            <button
+                                                onClick={handleDelete}
+                                                disabled={isDeleting}
+                                                className={`px-4 py-2 rounded text-white ${
+                                                    isDeleting
+                                                        ? "bg-red-300 cursor-not-allowed"
+                                                        : "bg-red-600 hover:bg-red-700"
+                                                }`}
+                                            >
+                                                Delete
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             </div>

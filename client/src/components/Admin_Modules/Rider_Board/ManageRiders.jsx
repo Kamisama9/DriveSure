@@ -126,7 +126,7 @@ const ManageRiders = () => {
 
       {/* Modal */}
       {selectedRider && (
-        <RiderCards rider={selectedRider} onClose={closeRider} />
+        <RiderCards rider={selectedRider} onClose={closeRider} onRefresh={fetchRiders} />
       )}
     </div>
   );

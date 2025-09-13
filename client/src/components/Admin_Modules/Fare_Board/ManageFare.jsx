@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { toast, Bounce } from 'react-toastify';
 
 const ManageFare = () => {
   const [locationPricing, setLocationPricing] = useState([]);
@@ -29,7 +30,17 @@ const ManageFare = () => {
       setCommissionStructure(commissionData || []);
     } catch (error) {
       console.error("Error fetching fare data:", error);
-      alert("Failed to fetch fare data. Make sure JSON server is running on port 3008");
+      toast.error("Failed to fetch fare data. Make sure JSON server is running on port 3008", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } finally {
       setLoading(false);
     }
@@ -66,10 +77,31 @@ const ManageFare = () => {
           )
         );
         setEditingLocation(null);
+        toast.success("Location updated successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
     } catch (error) {
       console.error("Error updating location:", error);
-      alert("Failed to update location");
+      toast.error("Failed to update location", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 
@@ -78,25 +110,103 @@ const ManageFare = () => {
   };
 
   const handleLocationDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this location?')) {
-      try {
-        const response = await fetch(`http://localhost:3008/location_pricing/${id}`, {
-          method: 'DELETE'
-        });
-
-        if (response.ok) {
-          setLocationPricing(prev => prev.filter(loc => loc.id !== id));
+    const confirmDelete = new Promise((resolve) => {
+      toast.warn(
+        ({ closeToast }) => (
+          <div className="flex items-start gap-3">
+            <div className="flex-1">
+              <p className="mb-3">Are you sure you want to delete this location?</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    closeToast();
+                    resolve(true);
+                  }}
+                  className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:shadow-lg hover:bg-red-600 transition-colors duration-200"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => {
+                    closeToast();
+                    resolve(false);
+                  }}
+                  className="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600 transition-colors duration-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        ),
+        {
+          position: "top-center",
+          autoClose: false,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: false,
+          closeButton: false,
+          theme: "light",
+          transition: Bounce,
+          style: {
+            alignItems: 'flex-start'
+          }
         }
-      } catch (error) {
-        console.error("Error deleting location:", error);
-        alert("Failed to delete location");
+      );
+    });
+
+    const shouldDelete = await confirmDelete;
+    if (!shouldDelete) return;
+
+    try {
+      const response = await fetch(`http://localhost:3008/location_pricing/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        setLocationPricing(prev => prev.filter(loc => loc.id !== id));
+        toast.success("Location deleted successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
+    } catch (error) {
+      console.error("Error deleting location:", error);
+      toast.error("Failed to delete location", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 
   const handleAddLocation = async () => {
     if (!newLocation.city || !newLocation.state || !newLocation.price_per_km) {
-      alert("Please fill all fields");
+      toast.error("Please fill all fields", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       return;
     }
 
@@ -117,10 +227,31 @@ const ManageFare = () => {
         const newLocationData = await response.json();
         setLocationPricing(prev => [...prev, newLocationData]);
         setNewLocation({ city: "", state: "", price_per_km: "" });
+        toast.success("Location added successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
     } catch (error) {
       console.error("Error adding location:", error);
-      alert("Failed to add location");
+      toast.error("Failed to add location", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 
@@ -147,10 +278,31 @@ const ManageFare = () => {
           )
         );
         setEditingCommission(null);
+        toast.success("Commission structure updated successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
     } catch (error) {
       console.error("Error updating commission:", error);
-      alert("Failed to update commission");
+      toast.error("Failed to update commission", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 

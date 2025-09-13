@@ -3,7 +3,7 @@ import RightArrow from "../../assets/arrows/right-arrow.png";
 
 const avatar = {
     "path": "/src/assets/testimonials/kickButtowski.avif",
-    "name": "Kick Buttowski"
+    "name": "Administrator"
 }
 
 const AdminSiderBar = ({onSelect}) => {
@@ -14,13 +14,13 @@ const AdminSiderBar = ({onSelect}) => {
 
   return (
       <aside className="shadow-lg bg-[#140604] fixed md:static inset-y-0 left-0 z-50 transition-all duration-300 ease-in-out w-20 md:w-64 hidden md:block">
-        <div className="h-[18vh] border-b">
+        <div className="h-40 border-b border-gray-600 flex flex-col items-center justify-center py-4">
           <img
             src={avatar.path}
-            className="mx-auto mt-6 rounded-full w-24 h-24 object-cover border-4 border-white"
+            className="rounded-full w-24 h-24 object-cover border-4 border-white mb-2"
             alt="user"
           />
-          <div className="text-center text-white font-semibold mt-2">
+          <div className="text-center text-white font-semibold text-sm px-2">
             {avatar.name}
           </div>
         </div>
@@ -58,7 +58,7 @@ const AdminSiderBar = ({onSelect}) => {
             onClick={() => onSelect?.("Verification")}
             className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
           >
-            Manage Verifications
+            Verifications
           </button>
         </div>
 
@@ -79,6 +79,16 @@ const AdminSiderBar = ({onSelect}) => {
             className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
           >
             Fare Board
+          </button>
+        </div>
+        
+        {/* Transaction Logs */}
+        <div className="mt-4 text-white">
+          <button
+            onClick={() => onSelect?.("transactions")}
+            className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
+          >
+            Transactions
           </button>
         </div>
       </aside>

@@ -44,10 +44,17 @@ const ManageDrivers = () => {
       })
     );
 
+    // Filter to only show drivers where all three documents are verified
+    const fullyVerifiedDrivers = enrichedDrivers.filter((driver) =>
+      driver.is_aadhaar_verified && 
+      driver.is_pan_verified && 
+      driver.is_driver_license_verified
+    );
+
     const filteredDrivers =
       searchTerm.trim() === ""
-        ? enrichedDrivers
-        : enrichedDrivers.filter((driver) =>
+        ? fullyVerifiedDrivers
+        : fullyVerifiedDrivers.filter((driver) =>
           driver[filterType]?.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
@@ -130,7 +137,7 @@ const ManageDrivers = () => {
       )}
 
       {selectedDriver && (
-        <DriverCards Driver={selectedDriver} onClose={closeDriver} />
+        <DriverCards Driver={selectedDriver} onClose={closeDriver} onRefresh={fetchData} />
       )}
 
     </div>

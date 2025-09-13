@@ -153,7 +153,7 @@
     {
       "id": "018fe39e-a8f6-41b8-9be4-1bf2626ba93d",
       "email": "user2@example.com",
-      "phone_number": "+919115276052",
+      "phone_number": "94585976",
       "password_hash": "pAgnxI3QgBva7g5aiBrynwrDSoinmBbivVIZLDa2OH07PpwglOgEUmlrdckcl4Gx",
       "first_name": "Priya",
       "middle_name": null,
@@ -166,7 +166,7 @@
       "role_description": "Registered driver",
       "status": "active",
       "created_at": "2025-09-01 10:00:00",
-      "updated_at": "2025-09-05 12:10:39"
+      "updated_at": "2025-09-13 12:21:09"
     },
     {
       "id": "b270c42f-7f20-4464-a0df-382f1684b167",
@@ -310,7 +310,7 @@
       "role_description": "Registered driver",
       "status": "active",
       "created_at": "2025-09-01 10:00:00",
-      "updated_at": "2025-09-01 10:00:00"
+      "updated_at": "2025-09-13 11:26:30"
     }
   ]
 }
