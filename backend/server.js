@@ -5,6 +5,7 @@ const sessionMiddleware = require("./config/session");
 const authRoutes = require("./routes/auth");
 const initSchema = require("./db/initSchema");
 const tripsRoutes = require("./routes/trips");
+const bookingRoutes = require("./routes/booking")
 const app = express();
 
 // Middleware
@@ -18,5 +19,6 @@ initSchema();
 // Mount routes
 app.use("/auth", authRoutes);
 app.use("/trips", tripsRoutes);
+app.use("/bookings",bookingRoutes);
 // Start server
 app.listen(3000, () => console.log("Server running on port 3000"));
