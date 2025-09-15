@@ -28,4 +28,4 @@ app.use("/verifications", verificationRoutes);
 app.use("/bookings",bookingRoutes);
 
 // Start server
-app.listen(4002, () => console.log("Server running on port 4002"));
+app.listen(3000, () => console.log("Server running on port 3000"));
