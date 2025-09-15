@@ -8,7 +8,7 @@ const tripsRoutes = require("./routes/trips");
 
 const verificationRoutes = require("./routes/verifications");
 
-const bookingRoutes = require("./routes/booking")
+const bookingRoutes = require("./routes/booking");
 
 const app = express();
 
@@ -25,7 +25,7 @@ app.use("/auth", authRoutes);
 app.use("/trips", tripsRoutes);
 
 app.use("/verifications", verificationRoutes);
-app.use("/bookings",bookingRoutes);
+app.use("/bookings", bookingRoutes);
 
 // Start server
-app.listen(4002, () => console.log("Server running on port 4002"));
+app.listen(3000, () => console.log("Server running on port 3000"));
