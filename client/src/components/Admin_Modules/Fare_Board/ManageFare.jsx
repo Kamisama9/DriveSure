@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { toast, Bounce } from 'react-toastify';
 
 const ManageFare = () => {
@@ -7,6 +7,7 @@ const ManageFare = () => {
   const [loading, setLoading] = useState(false);
   const [editingLocation, setEditingLocation] = useState(null);
   const [editingCommission, setEditingCommission] = useState(null);
+  const hasShownErrorRef = useRef(false); // Track if we've shown error toast
 
   const [newLocation, setNewLocation] = useState({
     city: "",
@@ -14,7 +15,7 @@ const ManageFare = () => {
     price_per_km: ""
   });
 
-  const fetchFareData = useCallback(async () => {
+  const fetchFareData = useCallback(async (silent = false) => {
     try {
       setLoading(true);
       
@@ -30,17 +31,20 @@ const ManageFare = () => {
       setCommissionStructure(commissionData || []);
     } catch (error) {
       console.error("Error fetching fare data:", error);
-      toast.error("Failed to fetch fare data. Make sure JSON server is running on port 3008", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      if (!silent && !hasShownErrorRef.current) {
+        toast.error("Failed to fetch fare data", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        hasShownErrorRef.current = true;
+      }
     } finally {
       setLoading(false);
     }
@@ -48,7 +52,8 @@ const ManageFare = () => {
 
   useEffect(() => {
     fetchFareData();
-  }, [fetchFareData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Location Pricing Functions
   const handleLocationEdit = (location) => {

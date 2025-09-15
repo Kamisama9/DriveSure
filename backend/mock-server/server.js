@@ -26,6 +26,16 @@ const servers = [
         name: 'bookings',
         port: 4000,
         file: 'booking.json'
+    },
+    {
+        name: 'transactions',
+        port: 4001,
+        file: 'transaction.json'
+    },
+    {
+        name: 'verifications',
+        port: 4002,
+        file: 'verification.json'
     }
 ];
 

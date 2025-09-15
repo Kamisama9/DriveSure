@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import RightArrow from "../../assets/arrows/right-arrow.png";
 
 const avatar = {
     "path": "/src/assets/testimonials/kickButtowski.avif",
@@ -7,9 +6,24 @@ const avatar = {
 }
 
 const AdminSiderBar = ({onSelect}) => {
-  const [isManageUsersOpen, setIsManageUsersOpen] = useState(false);
-  const toggleManageUsers = () => {
-    setIsManageUsersOpen(!isManageUsersOpen);
+  const [activeSelection, setActiveSelection] = useState(null);
+
+  const handleSelect = (selection) => {
+    if (activeSelection === selection) {
+      // If clicking the same menu, deselect it
+      setActiveSelection(null);
+      onSelect?.(null);
+    } else {
+      // Otherwise, select the new menu
+      setActiveSelection(selection);
+      onSelect?.(selection);
+    }
+  };
+
+  const getButtonClass = (selection) => {
+    return `w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600 transition-colors duration-200 ${
+      activeSelection === selection ? 'bg-red-600 text-white' : 'text-white'
+    }`;
   };
 
   return (
@@ -25,48 +39,41 @@ const AdminSiderBar = ({onSelect}) => {
           </div>
         </div>
 
-        {/* Manage Users Section */}
+        {/* Rider Board */}
         <div className="mt-4 text-white">
           <button
-            onClick={toggleManageUsers}
-            className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
+            onClick={() => handleSelect("riderBoard")}
+            className={getButtonClass("riderBoard")}
           >
-            User's Board
+            Rider Board
           </button>
-
-          {isManageUsersOpen && (
-            <div className="ml-4 bg-[#1f0a0a] rounded-md shadow-inner">
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
-                onClick={() => onSelect?.("riderBoard")}
-              >
-                <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
-                Rider Board
-              </div>
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
-                onClick={() => onSelect?.("driverBoard")}
-              >
-                <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
-                Driver Board
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Manage Users Section */}
+        {/* Driver Board */}
         <div className="mt-4 text-white">
           <button
-            onClick={() => onSelect?.("Verification")}
-            className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
+            onClick={() => handleSelect("driverBoard")}
+            className={getButtonClass("driverBoard")}
           >
-            Verifications
+            Driver Board
+          </button>
+        </div>
+
+        {/* Verifications */}
+        <div className="mt-4 text-white">
+          <button
+            onClick={() => handleSelect("verification")}
+            className={getButtonClass("verification")}
+          >
+            Document & Verification
           </button>
         </div>
 
         {/* Feedback */}
         <div className="mt-4 text-white">
           <button
-            onClick={() => onSelect?.("feedback")}
-            className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
+            onClick={() => handleSelect("feedback")}
+            className={getButtonClass("feedback")}
           >
             Feedback and Grievances
           </button>
@@ -75,8 +82,8 @@ const AdminSiderBar = ({onSelect}) => {
         {/* Fare */}
         <div className="mt-4 text-white">
           <button
-            onClick={() => onSelect?.("fare")}
-            className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
+            onClick={() => handleSelect("fare")}
+            className={getButtonClass("fare")}
           >
             Fare Board
           </button>
@@ -85,8 +92,8 @@ const AdminSiderBar = ({onSelect}) => {
         {/* Transaction Logs */}
         <div className="mt-4 text-white">
           <button
-            onClick={() => onSelect?.("transactions")}
-            className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
+            onClick={() => handleSelect("transaction")}
+            className={getButtonClass("transaction")}
           >
             Transactions
           </button>
