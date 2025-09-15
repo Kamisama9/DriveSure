@@ -14,6 +14,8 @@ import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes";
 import axios from "axios";
 import useStore from "./store/store";
 import { useEffect } from "react";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   const setUser = useStore((s) => s.setUser);
@@ -61,6 +63,7 @@ const App = () => {
         <Route path="/booking" element = {<BookingPage/>}/>
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
+      <ToastContainer />
     </Router>
   );
 };

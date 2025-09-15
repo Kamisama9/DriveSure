@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
+import { toast, Bounce } from "react-toastify";
 import { formatDateSafe, toMySQLFromDate } from "../Utils/DateUtil";
 import VehicleCards from "./VehicleCards";
 
-const DriverCards = ({ Driver, onClose }) => {
+const DriverCards = ({ Driver, onClose, onRefresh }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [user, setUser] = useState(null);
     const [userLoading, setUserLoading] = useState(false);
     const [userError, setUserError] = useState(null);
     const [showVehicles, setShowVehicles] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const [driverMeta, setDriverMeta] = useState({
         id: "",
@@ -51,50 +53,36 @@ const DriverCards = ({ Driver, onClose }) => {
             created_at: s(Driver.created_at),
             updated_at: s(Driver.updated_at)
         });
+
+        if (Driver.user_id) {
+            setUserLoading(true);
+            setUserError(null);
+
+            fetch(`http://localhost:3006/users/${Driver.user_id}`)
+                .then(async (res) => {
+                    if (!res.ok) throw new Error(`Failed to fetch user: ${res.status}`);
+                    return res.json();
+                })
+                .then((userData) => {
+                    setUser(userData);
+                    setFormData({
+                        phone_number: s(userData.phone_number),
+                        city: s(userData.city),
+                        state: s(userData.state),
+                        role_description: s(userData.role_description),
+                        status: s(userData.status) || "active",
+                        created_at: s(userData.created_at),
+                        updated_at: s(userData.updated_at)
+                    });
+                })
+                .catch((err) => setUserError(err.message))
+                .finally(() => setUserLoading(false));
+        }
     }, [Driver]);
 
-    useEffect(() => {
-        if (!Driver?.user_id) {
-            setUser(null);
-            setUserError("Missing driver.user_id");
-            return;
-        }
+    if (!Driver) return null;
 
-        const ac = new AbortController();
-
-        (async () => {
-            try {
-                setUserLoading(true);
-                setUserError(null);
-
-                const res = await fetch(`http://localhost:3006/users/${Driver.user_id}`, {
-                    signal: ac.signal
-                });
-                if (!res.ok) throw new Error(`Failed to load user: ${res.status}`);
-                const u = await res.json();
-
-                setUser(u);
-                setFormData({
-                    phone_number: s(u.phone_number),
-                    city: s(u.city),
-                    state: s(u.state),
-                    role_description: s(u.role_description),
-                    status: s(u.status || "active"),
-                    created_at: s(u.created_at),
-                    updated_at: s(u.updated_at)
-                });
-            } catch (err) {
-                if (err.name !== "AbortError") {
-                    console.error(err);
-                    setUserError(err.message || "Failed to load user");
-                }
-            } finally {
-                setUserLoading(false);
-            }
-        })();
-
-        return () => ac.abort();
-    }, [Driver?.user_id]);
+    const stop = (e) => e.stopPropagation();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -128,7 +116,17 @@ const DriverCards = ({ Driver, onClose }) => {
             });
 
             if (!res.ok) {
-                alert("Failed to update user");
+                toast.error("Failed to update user", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
                 return;
             }
 
@@ -136,17 +134,89 @@ const DriverCards = ({ Driver, onClose }) => {
             setUser(updatedUser);
             setFormData((prev) => ({ ...prev, updated_at: updatedAtMySQL }));
             setIsEditing(false);
-            alert("Driver (user profile) updated successfully!");
+
+            toast.success("Driver updated successfully!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
+
+            if (onRefresh) onRefresh();
         } catch (error) {
             console.error("Error updating user:", error);
-            alert("Error updating user");
+            toast.error("Error updating driver", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
         }
     };
 
-    // Delete the driver record (KYC) only
     const handleDelete = async () => {
-        if (!Driver?.id) return;
-        if (!window.confirm("Are you sure you want to delete this driver?")) return;
+        setIsDeleting(true);
+        
+        const confirmDelete = new Promise((resolve) => {
+            toast.warn(
+                ({ closeToast }) => (
+                    <div className="flex items-start gap-3">
+                        <div className="flex-1">
+                            <p className="mb-3">Are you sure you want to delete this driver?</p>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => {
+                                        closeToast();
+                                        resolve(true);
+                                    }}
+                                    className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 hover:shadow-lg transition-colors duration-200"
+                                >
+                                    Delete
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        closeToast();
+                                        resolve(false);
+                                    }}
+                                    className="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600 hover:shadow-lg transition-colors duration-200"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ),
+                {
+                    position: "top-center",
+                    autoClose: false,
+                    hideProgressBar: true,
+                    closeOnClick: false,
+                    pauseOnHover: false,
+                    draggable: false,
+                    closeButton: false,
+                    theme: "light",
+                    transition: Bounce,
+                    style: {
+                        alignItems: 'flex-start'
+                    }
+                }
+            );
+        });
+
+        const shouldDelete = await confirmDelete;
+        setIsDeleting(false);
+        
+        if (!shouldDelete) return;
 
         try {
             const res = await fetch(`http://localhost:3006/drivers/${Driver.id}`, {
@@ -154,384 +224,472 @@ const DriverCards = ({ Driver, onClose }) => {
             });
 
             if (!res.ok) {
-                alert("Failed to delete driver");
+                toast.error("Failed to delete driver", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
                 return;
             }
 
-            alert("Driver deleted successfully!");
-            onClose?.();
+            toast.success("Driver deleted successfully!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
+
+            if (onRefresh) onRefresh();
+            onClose();
+
         } catch (error) {
             console.error("Error deleting driver:", error);
-            alert("Error deleting driver");
+            toast.error("Error deleting driver", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
         }
     };
 
-
     return (
         <div
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-gradient-to-br from-black/50 to-black/30 backdrop-blur-md flex items-center justify-center p-4"
             onClick={onClose}
         >
             <div
-                className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto no-scrollbar relative"
-                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-2xl shadow-2xl border border-gray-100 w-full max-w-4xl max-h-[90vh] overflow-y-auto no-scrollbar relative transform transition-all duration-300 scale-100 hover:scale-[1.01]"
+                onClick={stop}
             >
-
-                <div className="p-6">
-                    {!showVehicles &&
+                <div className="p-8 bg-gradient-to-r from-green-50 to-emerald-50">
+                    {!showVehicles && (
                         <button
                             type="button"
                             aria-label="Close"
                             onClick={onClose}
-                            className="absolute top-3 right-3 z-50 inline-flex items-center justify-center
-                            h-11 w-11 rounded-full cursor-pointer
-                            text-gray-600 hover:text-blue-700 hover:bg-gray-100
-                            ring-2 ring-transparent ring-offset-white
-                            transition-colors duration-150 ease-out"
+                            className="absolute top-4 right-4 z-50 inline-flex items-center justify-center
+                                    h-12 w-12 rounded-full cursor-pointer bg-white shadow-lg border border-gray-200
+                                    text-gray-600 hover:text-red-500 hover:bg-red-50 hover:border-red-200
+                                    ring-2 ring-transparent ring-offset-white
+                                    transition-all duration-200 ease-out transform hover:scale-110"
                         >
-                            <span className="pointer-events-none text-2xl leading-none">✕</span>
+                            <span className="pointer-events-none text-xl font-medium leading-none">✕</span>
                         </button>
-                    }
+                    )}
 
                     <div className="relative h-full">
                         <div className={showVehicles ? "hidden" : "block"}>
-                            <div className="p-6">
-
-                                <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-                                    Driver Details
+                            
+                            <div className="text-center mb-8">
+                                <div className="relative inline-flex items-center justify-center group">
+                                    {Driver?.profile_photo ? (
+                                        <div className="relative w-20 h-20 rounded-full overflow-hidden shadow-lg">
+                                            <img 
+                                                src={Driver.profile_photo} 
+                                                alt={Driver.full_name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                            {/* Download button overlay */}
+                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        // Download functionality placeholder
+                                                        const link = document.createElement('a');
+                                                        link.href = Driver.profile_photo;
+                                                        link.download = `${Driver.full_name}_profile_photo.${Driver.profile_photo_mime?.split('/')[1] || 'jpg'}`;
+                                                        link.click();
+                                                    }}
+                                                    className="text-white hover:text-blue-200 transition-colors duration-200"
+                                                    title="Download profile photo"
+                                                >
+                                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full mb-4 shadow-lg">
+                                            <span className="text-3xl text-white font-bold">
+                                                {Driver?.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'D'}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {Driver?.profile_photo && (
+                                        <div className="absolute -bottom-1 -right-1 bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full shadow-lg">
+                                            📷
+                                        </div>
+                                    )}
+                                </div>
+                                <h2 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                                    {Driver?.full_name || 'Driver'}
                                 </h2>
+                                <p className="text-gray-600 mt-2 text-lg">{user?.email || 'Loading...'}</p>
+                                <div className="flex justify-center mt-3">
+                                    {driverMeta.is_aadhaar_verified && driverMeta.is_pan_verified && driverMeta.is_driver_license_verified ? (
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800 border border-green-200">
+                                            ✅ All Documents Verified
+                                        </span>
+                                    ) : (
+                                        <div className="flex items-center space-x-2">
+                                            {driverMeta.is_aadhaar_verified && driverMeta.is_pan_verified && !driverMeta.is_driver_license_verified && (
+                                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-800 border border-yellow-200">
+                                                    ⚠️ License Verification Pending
+                                                </span>
+                                            )}
+                                            {(!driverMeta.is_aadhaar_verified || !driverMeta.is_pan_verified || !driverMeta.is_driver_license_verified) && 
+                                             !(driverMeta.is_aadhaar_verified && driverMeta.is_pan_verified && !driverMeta.is_driver_license_verified) && (
+                                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-red-100 text-red-800 border border-red-200">
+                                                    ❌ Document Verification Pending
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
 
-                                {/* Loading / Error banners */}
-                                {userLoading && (
-                                    <div className="mb-4 rounded-md bg-blue-50 text-blue-700 px-3 py-2 text-sm">
-                                        Loading user…
+                            {/* Loading / Error banners */}
+                            {userLoading && (
+                                <div className="mb-6 rounded-xl bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 text-blue-700 px-4 py-3 text-sm font-medium">
+                                    <div className="flex items-center space-x-2">
+                                        <span>🔄</span>
+                                        <span>Loading user information...</span>
                                     </div>
-                                )}
-                                {userError && (
-                                    <div className="mb-4 rounded-md bg-red-50 text-red-700 px-3 py-2 text-sm">
-                                        {userError}
+                                </div>
+                            )}
+                            {userError && (
+                                <div className="mb-6 rounded-xl bg-gradient-to-r from-red-50 to-red-100 border border-red-200 text-red-700 px-4 py-3 text-sm font-medium">
+                                    <div className="flex items-center space-x-2">
+                                        <span>❌</span>
+                                        <span>{userError}</span>
                                     </div>
-                                )}
+                                </div>
+                            )}
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                {/* Fixed User Fields */}
+                                <div className="group bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300">
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 group-hover:text-gray-600">Email</label>
+                                    <div className="text-gray-900 font-medium text-base">{user?.email || "—"}</div>
+                                </div>
 
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            Email
-                                        </label>
-                                        <div className="text-gray-900 text-sm">{user?.email || "—"}</div>
+                                <div className="group bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300">
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 group-hover:text-gray-600">First Name</label>
+                                    <div className="text-gray-900 font-medium text-base">{user?.first_name || "—"}</div>
+                                </div>
+
+                                <div className="group bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300">
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 group-hover:text-gray-600">Last Name</label>
+                                    <div className="text-gray-900 font-medium text-base">{user?.last_name || "—"}</div>
+                                </div>
+
+                                <div className="group bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300">
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 group-hover:text-gray-600">Middle Name</label>
+                                    <div className="text-gray-900 font-medium text-base">{user?.middle_name || "—"}</div>
+                                </div>
+
+                                <div className="group bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl border border-purple-200 hover:shadow-md transition-all duration-200 hover:border-purple-300">
+                                    <label className="block text-xs font-semibold text-purple-600 uppercase tracking-wide mb-2 group-hover:text-purple-700">Role</label>
+                                    <div className="text-gray-900 font-medium text-base flex items-center">
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 border border-purple-200">
+                                            {user?.role || "—"}
+                                        </span>
                                     </div>
+                                </div>
 
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            First Name
-                                        </label>
-                                        <div className="text-gray-900 text-sm">{user?.first_name || "—"}</div>
+                                {/* Driver KYC Documents */}
+                                <div className="group bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200 hover:shadow-md transition-all duration-200 hover:border-green-300">
+                                    <label className="block text-xs font-semibold text-green-600 uppercase tracking-wide mb-2 group-hover:text-green-700">Aadhaar Card</label>
+                                    <div className="text-gray-900 font-medium text-base flex items-center">
+                                        <span className="inline-flex items-center">
+                                            🏢 {driverMeta.aadhar_card || "—"}
+                                        </span>
                                     </div>
+                                </div>
 
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            Last Name
-                                        </label>
-                                        <div className="text-gray-900 text-sm">{user?.last_name || "—"}</div>
+                                <div className="group bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200 hover:shadow-md transition-all duration-200 hover:border-green-300">
+                                    <label className="block text-xs font-semibold text-green-600 uppercase tracking-wide mb-2 group-hover:text-green-700">PAN Card</label>
+                                    <div className="text-gray-900 font-medium text-base flex items-center">
+                                        <span className="inline-flex items-center">
+                                            🏛️ {driverMeta.pan_card || "—"}
+                                        </span>
                                     </div>
+                                </div>
 
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            Middle Name
-                                        </label>
-                                        <div className="text-gray-900 text-sm">{user?.middle_name ?? "N/A"}</div>
+                                <div className="group bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200 hover:shadow-md transition-all duration-200 hover:border-green-300">
+                                    <label className="block text-xs font-semibold text-green-600 uppercase tracking-wide mb-2 group-hover:text-green-700">Driver License</label>
+                                    <div className="text-gray-900 font-medium text-base flex items-center">
+                                        <span className="inline-flex items-center">
+                                            🆔 {driverMeta.driver_license || "—"}
+                                        </span>
                                     </div>
+                                </div>
 
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            Role
-                                        </label>
-                                        <div className="text-gray-900 text-sm">{user?.role || "—"}</div>
-                                    </div>
-
-                                    {/* Driver KYC (read-only) */}
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            Aadhaar Card
-                                        </label>
-                                        <div className="text-gray-900 text-sm">{driverMeta.aadhar_card || "—"}</div>
-                                    </div>
-
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            PAN Card
-                                        </label>
-                                        <div className="text-gray-900 text-sm">{driverMeta.pan_card || "—"}</div>
-                                    </div>
-
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            Driver License
-                                        </label>
-                                        <div className="text-gray-900 text-sm">{driverMeta.driver_license || "—"}</div>
-                                    </div>
-
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            License Expiry
-                                        </label>
-                                        <div className="text-gray-900 text-sm">
-                                            {formatDateSafe(driverMeta.driver_license_expiry, {
+                                <div className="group bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-xl border border-orange-200 hover:shadow-md transition-all duration-200 hover:border-orange-300">
+                                    <label className="block text-xs font-semibold text-orange-600 uppercase tracking-wide mb-2 group-hover:text-orange-700">License Expiry</label>
+                                    <div className="text-gray-900 font-medium text-base flex items-center">
+                                        <span className="inline-flex items-center">
+                                            📅 {formatDateSafe(driverMeta.driver_license_expiry, {
                                                 locale: "en-IN",
                                                 timeZone: "Asia/Kolkata",
                                                 variant: "date",
                                                 fallback: "—",
                                                 assumeUTCForMySQL: true,
                                             })}
-                                        </div>
-                                    </div>
-
-
-                                    {/* Aadhaar Verified (pill badge) */}
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            Aadhaar Verified
-                                        </label>
-                                        <div className="text-gray-900 text-sm">
-                                            <span
-                                                className={`px-2 py-1 rounded-full text-xs ${driverMeta.is_aadhaar_verified
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-red-100 text-red-800'
-                                                    }`}
-                                            >
-                                                {driverMeta.is_aadhaar_verified ? 'Verified' : 'Not Verified'}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* PAN Verified (pill badge) */}
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            PAN Verified
-                                        </label>
-                                        <div className="text-gray-900 text-sm">
-                                            <span
-                                                className={`px-2 py-1 rounded-full text-xs ${driverMeta.is_pan_verified
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-red-100 text-red-800'
-                                                    }`}
-                                            >
-                                                {driverMeta.is_pan_verified ? 'Verified' : 'Not Verified'}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* License Verified (pill badge) */}
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            License Verified
-                                        </label>
-                                        <div className="text-gray-900 text-sm">
-                                            <span
-                                                className={`px-2 py-1 rounded-full text-xs ${driverMeta.is_driver_license_verified
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-red-100 text-red-800'
-                                                    }`}
-                                            >
-                                                {driverMeta.is_driver_license_verified ? 'Verified' : 'Not Verified'}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* User Timestamps (stored as MySQL strings in formData) */}
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            User Created At
-                                        </label>
-                                        <div className="text-gray-900 text-sm">
-                                            {formatDateSafe(formData.created_at, {
-                                                locale: "en-IN",
-                                                timeZone: "Asia/Kolkata",
-                                                variant: "datetime",
-                                                fallback: "—",
-                                                assumeUTCForMySQL: true,
-                                            })}
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            User Updated At
-                                        </label>
-                                        <div className="text-gray-900 text-sm">
-                                            {formatDateSafe(formData.updated_at, {
-                                                locale: "en-IN",
-                                                timeZone: "Asia/Kolkata",
-                                                variant: "datetime",
-                                                fallback: "—",
-                                                assumeUTCForMySQL: true,
-                                            })}
-                                        </div>
-                                    </div>
-
-                                    {/* Editable User Fields */}
-                                    <div className="bg-blue-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            Phone Number
-                                        </label>
-                                        {isEditing ? (
-                                            <input
-                                                type="text"
-                                                name="phone_number"
-                                                value={formData.phone_number}
-                                                onChange={handleInputChange}
-                                                className="w-full p-2 text-sm text-black border border-gray-300 rounded focus:border-black focus:outline-none"
-                                            />
-                                        ) : (
-                                            <div className="text-gray-900 text-sm">{formData.phone_number || "—"}</div>
-                                        )}
-                                    </div>
-
-                                    <div className="bg-blue-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            City
-                                        </label>
-                                        {isEditing ? (
-                                            <input
-                                                type="text"
-                                                name="city"
-                                                value={formData.city}
-                                                onChange={handleInputChange}
-                                                className="w-full p-2 text-sm text-black border border-gray-300 rounded focus:border-black focus:outline-none"
-                                            />
-                                        ) : (
-                                            <div className="text-gray-900 text-sm">{formData.city || "—"}</div>
-                                        )}
-                                    </div>
-
-                                    <div className="bg-blue-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            State
-                                        </label>
-                                        {isEditing ? (
-                                            <input
-                                                type="text"
-                                                name="state"
-                                                value={formData.state}
-                                                onChange={handleInputChange}
-                                                className="w-full p-2 text-sm text-black border border-gray-300 rounded focus:border-black focus:outline-none"
-                                            />
-                                        ) : (
-                                            <div className="text-gray-900 text-sm">{formData.state || "—"}</div>
-                                        )}
-                                    </div>
-
-                                    <div className="bg-blue-50 p-3 rounded-lg md:col-span-2">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">
-                                            Role Description
-                                        </label>
-                                        {isEditing ? (
-                                            <textarea
-                                                name="role_description"
-                                                value={formData.role_description}
-                                                onChange={handleInputChange}
-                                                rows={3}
-                                                className="w-full p-2 text-sm text-black border border-gray-300 rounded focus:border-black focus:outline-none"
-                                            />
-                                        ) : (
-                                            <div className="text-gray-900 text-sm">
-                                                {formData.role_description || "—"}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="bg-blue-50 p-3 rounded-lg">
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">Status</label>
-                                        {isEditing ? (
-                                            <select
-                                                name="status"
-                                                value={formData.status}
-                                                onChange={handleInputChange}
-                                                className="w-full p-2 text-sm text-black border border-gray-300 rounded focus:border-black focus:outline-none"
-                                            >
-                                                <option value="active">Active</option>
-                                                <option value="suspended">Suspended</option>
-                                                <option value="deleted">Deleted</option>
-                                            </select>
-                                        ) : (
-                                            <div className="text-gray-900 text-sm">
-                                                <span
-                                                    className={`px-2 py-1 rounded-full text-xs ${formData.status === 'active'
-                                                        ? 'bg-green-100 text-green-800'
-                                                        : formData.status === 'suspended'
-                                                            ? 'bg-yellow-100 text-yellow-800'
-                                                            : formData.status === 'deleted'
-                                                                ? 'bg-red-100 text-red-800'
-                                                                : 'bg-gray-100 text-gray-800'
-                                                        }`}
-                                                >
-                                                    {formData.status || '—'}
-                                                </span>
-                                            </div>
-                                        )}
+                                        </span>
                                     </div>
                                 </div>
 
-                                {/* Actions */}
-                                <div className="flex justify-between items-center mt-4">
+                                {/* Verification Status Cards */}
+                                <div className="group bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-xl border border-indigo-200 hover:shadow-md transition-all duration-200 hover:border-indigo-300">
+                                    <label className="block text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2 group-hover:text-indigo-700">Aadhaar Verified</label>
+                                    <div className="text-gray-900 font-medium text-base">
+                                        <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${driverMeta.is_aadhaar_verified ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'}`}>
+                                            {driverMeta.is_aadhaar_verified ? '✅ Verified' : '❌ Not Verified'}
+                                        </span>
+                                    </div>
+                                </div>
 
-                                    {!isEditing && (
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowVehicles(true)}
-                                            className="px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
-                                        >
-                                            View Vehicles
-                                        </button>
+                                <div className="group bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-xl border border-indigo-200 hover:shadow-md transition-all duration-200 hover:border-indigo-300">
+                                    <label className="block text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2 group-hover:text-indigo-700">PAN Verified</label>
+                                    <div className="text-gray-900 font-medium text-base">
+                                        <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${driverMeta.is_pan_verified ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'}`}>
+                                            {driverMeta.is_pan_verified ? '✅ Verified' : '❌ Not Verified'}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="group bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-xl border border-indigo-200 hover:shadow-md transition-all duration-200 hover:border-indigo-300">
+                                    <label className="block text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2 group-hover:text-indigo-700">License Verified</label>
+                                    <div className="text-gray-900 font-medium text-base">
+                                        <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${driverMeta.is_driver_license_verified ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'}`}>
+                                            {driverMeta.is_driver_license_verified ? '✅ Verified' : '❌ Not Verified'}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Editable Fields */}
+                                <div className="group bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200 hover:shadow-md transition-all duration-200 hover:border-blue-300">
+                                    <label className="block text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2 group-hover:text-blue-700">Phone Number</label>
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            name="phone_number"
+                                            value={formData.phone_number}
+                                            onChange={handleInputChange}
+                                            className="w-full p-3 text-base font-medium text-black bg-white border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                                        />
+                                    ) : (
+                                        <div className="text-gray-900 font-medium text-base flex items-center">
+                                            <span className="inline-flex items-center">
+                                                📱 {formData.phone_number}
+                                            </span>
+                                        </div>
                                     )}
+                                </div>
 
+                                <div className="group bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200 hover:shadow-md transition-all duration-200 hover:border-blue-300">
+                                    <label className="block text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2 group-hover:text-blue-700">City</label>
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            name="city"
+                                            value={formData.city}
+                                            onChange={handleInputChange}
+                                            className="w-full p-3 text-base font-medium text-black bg-white border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                                        />
+                                    ) : (
+                                        <div className="text-gray-900 font-medium text-base flex items-center">
+                                            <span className="inline-flex items-center">
+                                                🏙️ {formData.city}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
 
-                                    {/* Right-aligned button group */}
-                                    <div className="flex gap-3">
-                                        <button
-                                            onClick={() => setIsEditing((v) => !v)}
-                                            className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-gray-800"
+                                <div className="group bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200 hover:shadow-md transition-all duration-200 hover:border-blue-300">
+                                    <label className="block text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2 group-hover:text-blue-700">State</label>
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            name="state"
+                                            value={formData.state}
+                                            onChange={handleInputChange}
+                                            className="w-full p-3 text-base font-medium text-black bg-white border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                                        />
+                                    ) : (
+                                        <div className="text-gray-900 font-medium text-base flex items-center">
+                                            <span className="inline-flex items-center">
+                                                📍 {formData.state}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="group bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200 hover:shadow-md transition-all duration-200 hover:border-blue-300">
+                                    <label className="block text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2 group-hover:text-blue-700">Role Description</label>
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            name="role_description"
+                                            value={formData.role_description}
+                                            onChange={handleInputChange}
+                                            className="w-full p-3 text-base font-medium text-black bg-white border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                                        />
+                                    ) : (
+                                        <div className="text-gray-900 font-medium text-base">{formData.role_description}</div>
+                                    )}
+                                </div>
+
+                                <div className="group bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200 hover:shadow-md transition-all duration-200 hover:border-green-300">
+                                    <label className="block text-xs font-semibold text-green-600 uppercase tracking-wide mb-2 group-hover:text-green-700">Status</label>
+                                    {isEditing ? (
+                                        <select
+                                            name="status"
+                                            value={formData.status}
+                                            onChange={handleInputChange}
+                                            className="w-full p-3 text-base font-medium text-black bg-white border-2 border-green-200 rounded-lg focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200 transition-all duration-200"
                                         >
-                                            {isEditing ? "Cancel" : "Edit"}
-                                        </button>
-                                        <button
-                                            onClick={handleUpdate}
-                                            disabled={!isEditing}
-                                            className={`px-4 py-2 rounded text-white ${isEditing
-                                                ? "bg-indigo-600 hover:bg-indigo-700"
-                                                : "bg-indigo-300 cursor-not-allowed"
-                                                }`}
-                                        >
-                                            Save
-                                        </button>
-                                        <button
-                                            onClick={handleDelete}
-                                            className="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white"
-                                        >
-                                            Delete
-                                        </button>
+                                            <option value="active">Active</option>
+                                            <option value="suspended">Suspended</option>
+                                        </select>
+                                    ) : (
+                                        <div className="text-gray-900 font-medium text-base">
+                                            <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${formData.status === 'active' ? 'bg-green-100 text-green-800 border border-green-200' :
+                                                formData.status === 'suspended' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
+                                                    formData.status === 'deleted' ? 'bg-red-100 text-red-800 border border-red-200' :
+                                                        'bg-gray-100 text-gray-800 border border-gray-200'
+                                                }`}>
+                                                {formData.status === 'active' && '✅'}
+                                                {formData.status === 'suspended' && '⚠️'}
+                                                {formData.status === 'deleted' && '❌'}
+                                                {formData.status}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Timestamp Fields */}
+                                <div className="group bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300">
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 group-hover:text-gray-600">User Created At</label>
+                                    <div className="text-gray-900 font-medium text-base flex items-center">
+                                        <span className="inline-flex items-center">
+                                            🗓️ {formatDateSafe(formData.created_at, {
+                                                locale: "en-IN",
+                                                timeZone: "Asia/Kolkata",
+                                                variant: "datetime",
+                                                fallback: "—",
+                                                assumeUTCForMySQL: true,
+                                            })}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="group bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300">
+                                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 group-hover:text-gray-600">User Updated At</label>
+                                    <div className="text-gray-900 font-medium text-base flex items-center">
+                                        <span className="inline-flex items-center">
+                                            🔄 {formatDateSafe(formData.updated_at, {
+                                                locale: "en-IN",
+                                                timeZone: "Asia/Kolkata",
+                                                variant: "datetime",
+                                                fallback: "—",
+                                                assumeUTCForMySQL: true,
+                                            })}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    {showVehicles && (
-                        <div className="block">
-                            <VehicleCards
-                                ownerId={driverMeta.id || Driver.id}
-                                onClose={() => setShowVehicles(false)}
-                            />
+                            {/* Action Buttons */}
+                            <div className="flex justify-center space-x-6 bg-gradient-to-r from-gray-50 to-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                                {isEditing ? (
+                                    <>
+                                        <button
+                                            onClick={handleUpdate}
+                                            className="group relative bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl font-semibold text-base
+                                                     hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200 
+                                                     shadow-lg hover:shadow-xl flex items-center space-x-2"
+                                        >
+                                            <span>💾</span>
+                                            <span>Save Changes</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setIsEditing(false)}
+                                            className="group relative bg-gradient-to-r from-gray-400 to-gray-500 text-white px-8 py-3 rounded-xl font-semibold text-base
+                                                     hover:from-gray-500 hover:to-gray-600 transform hover:scale-105 transition-all duration-200 
+                                                     shadow-lg hover:shadow-xl flex items-center space-x-2"
+                                        >
+                                            <span>❌</span>
+                                            <span>Cancel</span>
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={() => setIsEditing(true)}
+                                            className="group relative bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-xl font-semibold text-base
+                                                     hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 
+                                                     shadow-lg hover:shadow-xl flex items-center space-x-2"
+                                        >
+                                            <span>✏️</span>
+                                            <span>Edit Driver</span>
+                                        </button>
+                                        <button
+                                            onClick={handleDelete}
+                                            disabled={isDeleting}
+                                            className="group relative bg-gradient-to-r from-red-500 to-red-600 text-white px-8 py-3 rounded-xl font-semibold text-base
+                                                     hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all duration-200 
+                                                     shadow-lg hover:shadow-xl flex items-center space-x-2 disabled:opacity-50"
+                                        >
+                                            <span>🗑️</span>
+                                            <span>Delete Driver</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setShowVehicles(true)}
+                                            className="group relative bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold text-base
+                                                     hover:from-purple-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 
+                                                     shadow-lg hover:shadow-xl flex items-center space-x-2"
+                                        >
+                                            <span>🚗</span>
+                                            <span>View Vehicles</span>
+                                        </button>
+                                    </>
+                                )}
+                            </div>
                         </div>
-                    )}
+
+                        {showVehicles && (
+                            <div className="block">
+                                <VehicleCards
+                                    ownerId={driverMeta.id || Driver.id}
+                                    onClose={() => setShowVehicles(false)}
+                                />
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
     );
-
-
-
 };
 
 export default DriverCards;
