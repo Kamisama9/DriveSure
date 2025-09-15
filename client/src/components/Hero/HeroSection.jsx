@@ -2,6 +2,8 @@ import { useState } from "react";
 import HeroBg from "../../assets/hero/hero-bg.png"
 import MainCar from "../../assets/hero/main-car.png"
 import { Link } from "react-router-dom";
+
+
 const HeroSection = () => {
   const [source, setSource] = useState("");
   const [destination, setDestination] = useState("");
@@ -72,10 +74,6 @@ const HeroSection = () => {
 
           <img
             src={MainCar}
-            wrapperProps={{
-              // If you need to, you can tweak the effect transition using the wrapper style.
-              style: { transitionDelay: '1s' },
-            }}
             className="relative right-10"
             effect="blur"
           />

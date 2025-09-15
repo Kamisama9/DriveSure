@@ -1,173 +1,139 @@
-// controllers/authController.js
-const db = require("../config/db"); // should be a mysql2 connection
+const db = require("../config/db");
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require("uuid");
 
-/**
- * Basic validation for signup inputs.
- * Returns an array of error messages (empty when valid).
- */
-const validateUserInput = (data) => {
-  const errors = [];
-  const { email, phone_number, password, name, role } = data;
+const JWT_SECRET = 'your-secret-key-change-in-production';
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Login controller
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  if (!email || !emailRegex.test(email)) {
-    errors.push("Invalid or missing email");
-  }
-  if (!password || password.length < 6) {
-    errors.push("Password must be at least 6 characters");
-  }
-  if (!name || !name.trim()) {
-    errors.push("Name is required");
-  }
-  if (!role || !["rider", "driver"].includes(role)) {
-    errors.push("Role must be either 'rider' or 'driver'");
-  }
-  if (phone_number && !/^\+?[0-9]{7,15}$/.test(String(phone_number))) {
-    errors.push("Invalid phone number format");
-  }
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
 
-  return errors;
+    const [users] = await db.promise().query(
+      "SELECT * FROM users WHERE email = ?",
+      [email.toLowerCase()]
+    );
+
+    if (users.length === 0) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    const user = users[0];
+
+    // Verify password
+    const validPassword = await bcrypt.compare(password, user.password_hash);
+    if (!validPassword) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    // Send response without sensitive data
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
-// POST /auth/signup
+// Signup controller
 exports.signup = async (req, res) => {
   try {
-    let {
-      email,
-      phone_number,
-      password,
-      name,
-      city,
-      state,
-      role,
-      role_description,
-    } = req.body || {};
+    const { email, password, name, role } = req.body;
 
-    // Normalize inputs
-    email = typeof email === "string" ? email.trim().toLowerCase() : email;
-    name = typeof name === "string" ? name.trim() : name;
-    city = city ? String(city).trim() : null;
-    state = state ? String(state).trim() : null;
-    role_description = role_description ? String(role_description).trim() : null;
+    // Validate required fields
+    if (!email || !password || !name || !role) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
 
-    // Validate input
-    const errors = validateUserInput({ email, phone_number, password, name, role });
-    if (errors.length > 0) {
-      return res.status(400).json({ errors });
+    // Validate role
+    if (!['rider', 'driver'].includes(role)) {
+      return res.status(400).json({ message: 'Invalid role' });
     }
 
     // Check if email already exists
     const [existingUser] = await db.promise().query(
-      "SELECT id FROM drivesure.users WHERE email = ? LIMIT 1",
-      [email]
+      "SELECT id FROM users WHERE email = ?",
+      [email.toLowerCase()]
     );
+
     if (existingUser.length > 0) {
-      return res.status(409).json({ error: "Email already registered" });
+      return res.status(409).json({ message: 'Email already registered' });
     }
 
-    // Create user
-    const id = uuidv4();
-    const password_hash = await bcrypt.hash(password, 10);
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create new user
+    const userId = uuidv4();
     await db.promise().query(
-      `INSERT INTO drivesure.users
-        (id, email, phone_number, password_hash, name, city, state, role, role_description)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        id,
-        email,
-        phone_number || null,
-        password_hash,
-        name,
-        city,
-        state,
-        role,
-        role_description,
-      ]
+      `INSERT INTO users (id, email, password_hash, name, role)
+       VALUES (?, ?, ?, ?, ?)`,
+      [userId, email.toLowerCase(), hashedPassword, name, role]
     );
 
-    return res
-      .status(201)
-      .json({ message: "Signup successful", user: { id, email, role } });
-  } catch (err) {
-    console.error("Signup error:", err);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(201).json({ message: 'User created successfully' });
+
+  } catch (error) {
+    console.error('Signup error:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-// POST /auth/login
-exports.login = async (req, res) => {
+// Get current user
+exports.me = async (req, res) => {
   try {
-    const { email, password } = req.body || {};
-
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
+    // Get token from header
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+      return res.status(401).json({ message: 'No token provided' });
     }
 
-    const normalizedEmail =
-      typeof email === "string" ? email.trim().toLowerCase() : email;
+    // Verify token
+    const decoded = jwt.verify(token, JWT_SECRET);
 
-    const [results] = await db
-      .promise()
-      .query(
-        "SELECT id, email, role, password_hash FROM drivesure.users WHERE email = ? LIMIT 1",
-        [normalizedEmail]
-      );
+    // Get user data
+    const [users] = await db.promise().query(
+      "SELECT id, email, name, role FROM users WHERE id = ?",
+      [decoded.id]
+    );
 
-    if (results.length === 0) {
-      return res.status(404).json({ error: "User not found" });
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    const user = results[0];
-    const match = await bcrypt.compare(password, user.password_hash);
-    if (!match) {
-      return res.status(401).json({ error: "Invalid credentials" });
+    res.json({ user: users[0] });
+
+  } catch (error) {
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid token' });
     }
-
-    // Attach minimal user info to session
-    req.session.user = { id: user.id, email: user.email, role: user.role };
-    req.session.save((saveErr) => {
-      if (saveErr) {
-        console.error("Session save error:", saveErr);
-        return res.status(500).json({ error: "Session save failed" });
-      }
-
-      return res.status(200).json({
-        message: "Login successful",
-        user: { id: user.id, email: user.email, role: user.role },
-      });
-    });
-  } catch (err) {
-    console.error("Login error:", err);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error('Get user error:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-// POST /auth/logout
+// Logout (client-side only)
 exports.logout = (req, res) => {
-  try {
-    req.session.destroy((err) => {
-      if (err) {
-        console.error("Session destroy error:", err);
-        return res.status(500).json({ error: "Session destroy failed" });
-      }
-      // Ensure this matches your express-session cookie name
-      res.clearCookie("drivesure.sid");
-      return res.json({ message: "Logout successful" });
-    });
-  } catch (err) {
-    console.error("Logout error:", err);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-// GET /auth/me
-exports.me = (req, res) => {
-  if (req.session?.user) {
-    return res.json({ user: req.session.user });
-  }
-  return res.status(401).json({ error: "Not authenticated" });
+  res.json({ message: 'Logged out successfully' });
 };

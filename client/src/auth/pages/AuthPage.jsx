@@ -6,10 +6,6 @@ import LoginForm from "../components/LoginForm";
 import SignupForm from "../components/SignupForm";
 import HeroBg from "../../assets/hero/hero-bg.png";
 
-axios.defaults.withCredentials = true;
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-axios.defaults.baseURL = `${BASE_URL}`;
-
 const AuthPage = () => {
   const [mode, setMode] = useState("login");
   const [error, setError] = useState("");
@@ -20,37 +16,24 @@ const AuthPage = () => {
     setError("");
     
     try {
-      const res = await axios.post("/auth/login", { email, password });
-      const user = res.data.user;
+      const res = await axios.post("http://localhost:3000/auth/login", { 
+        email, 
+        password 
+      });
       
-      if (user?.role) {
-        setUser(user);
-        switch (user.role) {
-          case 'rider':
-            navigate('/rider');
-            break;
-          case 'driver':
-            navigate('/driver');
-            break;
-          case 'admin':
-            navigate('/admin');
-            break;
-          default:
-            setError("Invalid user role");
-            break;
-        }
-      } else {
-        setError("Login failed. Please check your credentials.");
-      }
+      const { user, token } = res.data;
+      
+      // Save token
+      localStorage.setItem('token', token);
+      
+      // Save user info
+      setUser(user);
+      
+      // Navigate based on role
+      navigate(`/${user.role}`);
     } catch (err) {
       console.error("Login error:", err);
-      if (err.response?.status === 401) {
-        setError("Invalid email or password");
-      } else if (err.response?.status === 404) {
-        setError("Account not found");
-      } else {
-        setError("An error occurred during login. Please try again.");
-      }
+      setError(err.response?.data?.message || "Login failed");
     }
   };
 

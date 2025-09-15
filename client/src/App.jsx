@@ -4,49 +4,42 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { useEffect } from "react";
+import useStore from "./store/store";
 import LandingPage from "./pages/LandingPage";
-import Login from "./pages/Login";
 import RiderPage from "./pages/RiderPage";
 import DriverPage from "./pages/DriverPage";
 import AdminPage from "./pages/AdminPage";
 import BookingPage from "./pages/BookingPage";
-import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes";
-import axios from "axios";
-import useStore from "./store/store";
-import { useEffect } from "react";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import ProtectedRoute from "./routes/ProtectedRoute";
+import AuthPage from "./auth/pages/AuthPage";
 
 const App = () => {
   const setUser = useStore((s) => s.setUser);
-  const loading = useStore((s) => s.loading);
-  const setLoading = useStore((s) => s.setLoading);
-
   useEffect(() => {
-    axios
-      .get("/auth/me")
-      .then((res) => setUser(res.data.user))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, [setUser, setLoading]);
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const user = JSON.parse(atob(token.split('.')[1]));
+        setUser(user);
+      } catch (error) {
+        localStorage.removeItem('token');
+        console.error('Invalid token:', error);
+      }
+    }
+  }, [setUser]);
 
-  if (loading) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        Loading...
-      </div>
-    );
-  }
+
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/auth" element={<Login />} />
+        <Route path="/auth" element={<AuthPage />} />
         <Route
           path="/rider"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['rider']}>
               <RiderPage />
             </ProtectedRoute>
           }
@@ -54,16 +47,29 @@ const App = () => {
         <Route
           path="/driver"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['driver']}>
               <DriverPage />
             </ProtectedRoute>
           }
         />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/booking" element = {<BookingPage/>}/>
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/booking"
+          element={
+            <ProtectedRoute allowedRoles={['rider', 'admin']}>
+              <BookingPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
-      <ToastContainer />
     </Router>
   );
 };
