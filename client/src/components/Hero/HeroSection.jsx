@@ -1,7 +1,7 @@
 import { useState } from "react";
 import HeroBg from "../../assets/hero/hero-bg.png"
 import MainCar from "../../assets/hero/main-car.png"
-
+import { Link } from "react-router-dom";
 const HeroSection = () => {
   const [source, setSource] = useState("");
   const [destination, setDestination] = useState("");
@@ -50,7 +50,7 @@ const HeroSection = () => {
             </div>
 
             <div className="flex gap-4">
-              <button
+             <Link to='/booking'> <button
                 type="submit"
                 className="bg-[#ff4d30] text-white py-4 px-8 rounded-lg font-medium
                          transform transition-all duration-300 cursor-pointer hover:bg-red-700
@@ -58,6 +58,7 @@ const HeroSection = () => {
               >
                 Book A Cab
               </button>
+              </Link>
             </div>
           </form>
           

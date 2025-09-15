@@ -1,6 +1,25 @@
 {
   "riders": [
     {
+
+      "id": "a1b2c3d4-e5f6-7890-abcd-1234567890ab",
+      "email": "john.doe@example.com",
+      "phone_number": "+919876543210",
+      "password_hash": "hashed_password_1",
+      "name": "John",
+      "city": "Coimbatore",
+      "state": "Tamil Nadu",
+      "is_email_verified": true,
+      "is_phone_verified": true,
+      "role": "rider",
+      "role_description": "Regular rider",
+      "status": "suspended",
+      "created_at": "2025-09-01 10:00:00",
+      "updated_at": "2025-09-05 10:46:31.831",
+      "bookings": []
+    },
+    {
+
       "id": "b2c3d4e5-f6a7-8901-bcde-2345678901bc",
       "email": "jane.smith@example.com",
       "phone_number": "+919812345678",
@@ -16,7 +35,28 @@
       "role_description": "riding along the waves",
       "status": "active",
       "created_at": "2025-08-25 14:30:00",
-      "updated_at": "2025-09-14 20:35:12.055"
+      "updated_at": "2025-09-05 03:53:00.807",
+      "bookings": []
+    },
+    {
+      "id": "c3d4e5f6-a7b8-9012-cdef-3456789012cd",
+      "email": "admin@example.com",
+      "phone_number": "+919800112233",
+      "password_hash": "hashed_password_3",
+      "first_name": "Admin",
+      "middle_name": null,
+      "last_name": "User",
+      "city": "Madurai",
+      "state": "Tamil Nadu",
+      "is_email_verified": true,
+      "is_phone_verified": false,
+      "role": "admin",
+      "role_description": "System administrator",
+      "status": "active",
+      "created_at": "2025-07-15 09:00:00",
+      "bookings": [],
+      "updated_at": "2025-07-15 09:00:00"
+
     },
     {
       "id": "d4e5f6a7-b8c9-0123-def0-4567890123de",
@@ -34,7 +74,9 @@
       "role_description": "Occasional rider",
       "status": "active",
       "created_at": "2025-06-10 11:45:00",
-      "updated_at": "2025-09-13 12:00:14.220"
+      "bookings": [],
+      "updated_at": "2025-06-10 11:45:00"
+
     },
     {
       "id": "e5f6a7b8-c9d0-1234-ef01-5678901234ef",
@@ -52,6 +94,7 @@
       "role_description": "Bike driver",
       "status": "active",
       "created_at": "2025-05-20 08:20:00",
+      "bookings": [],
       "updated_at": "2025-05-20 08:20:00"
     },
     {
@@ -70,7 +113,9 @@
       "role_description": "Frequent rider",
       "status": "suspended",
       "created_at": "2025-04-18 16:00:00",
-      "updated_at": "2025-09-14 20:45:30.414"
+      "bookings": [],
+      "updated_at": "2025-09-06 10:31:27.959"
+
     },
     {
       "id": "a7b8c9d0-e1f2-3456-0123-789012345601",
@@ -88,6 +133,7 @@
       "role_description": "Auto driver",
       "status": "active",
       "created_at": "2025-03-12 13:15:00",
+      "bookings": [],
       "updated_at": "2025-03-12 13:15:00"
     },
     {
@@ -106,7 +152,9 @@
       "role_description": "New user",
       "status": "suspended",
       "created_at": "2025-02-05 07:30:00",
-      "updated_at": "2025-09-14 20:49:53.815"
+      "bookings": [],
+      "updated_at": "2025-02-05 07:30:00"
+
     },
     {
       "id": "c9d0e1f2-a3b4-5678-2345-901234567823",
@@ -124,6 +172,7 @@
       "role_description": "Support admin",
       "status": "active",
       "created_at": "2025-01-10 12:00:00",
+      "bookings": [],
       "updated_at": "2025-01-10 12:00:00"
     },
     {
@@ -142,7 +191,8 @@
       "role_description": "Taxi driver",
       "status": "active",
       "created_at": "2024-12-20 18:45:00",
-      "updated_at": "2025-09-13 15:57:55.905"
+      "bookings": [],
+      "updated_at": "2025-09-05 04:28:01.996"
     }
   ]
 }

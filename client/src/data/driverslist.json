@@ -21,6 +21,13 @@
       "user_id": "018fe39e-a8f6-41b8-9be4-1bf2626ba93d",
       "aadhar_card": "712031856788",
       "pan_card": "FWDWC1574D",
+
+      "first_name": "Amit",
+      "last_name": "Sharma",
+      "vehicleType": "car",
+      "vehicleId": "CAR-1234",
+      "is_aadhaar_verified": true,
+      "is_pan_verified": true,
       "driver_license": "DLTN2025002",
       "driver_license_expiry": "2028-05-28",
       "profile_photo": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD...",

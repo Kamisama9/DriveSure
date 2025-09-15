@@ -193,6 +193,68 @@ export default function Booking() {
     styles: darkMapStyle,
     disableDefaultUI: true,
   };
+  const handleBooking = async () => {
+    console.log("🚀 Confirm Ride button clicked");
+    try {
+      const bookingData = {
+        id: crypto.randomUUID(), // Generate UUID for booking
+        pickup: {
+          address: fromText,
+          coordinates: fromCoord ? {
+            lat: fromCoord.lat,
+            lng: fromCoord.lng
+          } : { lat: 0, lng: 0 }
+        },
+        dropoff: {
+          address: toText,
+          coordinates: toCoord ? {
+            lat: toCoord.lat,
+            lng: toCoord.lng
+          } : { lat: 0, lng: 0 }
+        },
+        driver_id: null, // Will be assigned by backend
+        rider_id: null, // Should be set from auth context
+        vehicle_id: null, // Will be assigned by backend
+        booking_status: "pending",
+        fare: finalFare,
+        distance: distanceKm,
+        payment_mode: payment,
+        payment_status: "pending",
+        payment_id: crypto.randomUUID(),
+        driver_name: null, // Will be assigned by backend
+        driver_contact: null, // Will be assigned by backend
+        vehicle_model: null, // Will be assigned by backend
+        vehicle_plate: null, // Will be assigned by backend
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      const res = await fetch("http://localhost:4000/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookingData),
+      });
+    
+    if (!res.ok) {
+      const errMsg = await res.text();
+      throw new Error(errMsg);
+    }
+
+    const data = await res.json();
+    console.log("✅ Booking confirmed:", data);
+   if (data.driver) {
+  alert(`Booking Confirmed! Driver: ${data.driver.name}`);
+} else {
+  alert("Booking Confirmed! ✅");
+}
+
+  } catch (err) {
+    console.error("❌ Booking failed:", err.message);
+    alert("Booking failed: " + err.message);
+  }
+};
+
+
 
   // --- UI ---
   return (
@@ -269,9 +331,9 @@ export default function Booking() {
             </p>
           )}
           <button
-            onClick={() => alert("Ride Confirmed 🚕")}
-            disabled={!fromCoord || !toCoord || !selectedVehicle}
-            className="w-full rounded-lg bg-brand-accent px-4 py-2 font-medium hover:bg-brand-highlight transition disabled:opacity-50"
+            onClick={handleBooking}
+            // disabled={!fromCoord || !toCoord || !selectedVehicle}
+            className="w-full rounded-lg bg-white text-black px-4 py-2 font-medium hover:bg-brand-highlight transition disabled:opacity-50"
           >
             Confirm Ride
           </button>

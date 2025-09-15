@@ -1,79 +1,100 @@
 {
-    "bookings": [
+  "bookings": [
     {
-        "id": "249259b5-08ff-4911-a3d7-8b187c407fea",
-        "pickup": "123 Main Street",
-        "dropoff": "456 Elm Street",
-        "driver_id": "19f27bb8-78b5-4733-9b32-3ceedf6043ce",
-        "rider_id": "1a3f4433-b682-4e8f-ae27-6cee0fd448e7",
-        "vehicle_id": "26661a06-41fc-4032-9845-e122073adbf7",
-        "booking_status": "completed",
-        "fare": 25.5,
-        "distance": 12.3,
-        "payment_status": "paid",
-        "payment_id": "40c771bf-7706-4161-bfc1-fa7ef3562b92",
-        "created_at": "2025-09-04T05:33:48.720517",
-        "updated_at": "2025-09-04T05:33:48.720525"
+      "id": "249259b5-08ff-4911-a3d7-8b187c407fea",
+      "pickup": {
+        "address": "123 Main Street",
+        "coordinates": {
+          "lat": 0,
+          "lng": 0
+        }
+      },
+      "dropoff": {
+        "address": "456 Elm Street",
+        "coordinates": {
+          "lat": 0,
+          "lng": 0
+        }
+      },
+      "driver_id": "cb9eb4c2-6ac5-4a8b-84fd-e9c1742a6484",
+      "rider_id": "1a3f4433-b682-4e8f-ae27-6cee0fd448e7",
+      "vehicle_id": "v-1a2b3c4d-1111-4ef0-aaaa-000000000001",
+      "booking_status": "completed",
+      "fare": 25.5,
+      "distance": 12.3,
+      "payment_mode": "cash",
+      "payment_status": "paid",
+      "payment_id": "40c771bf-7706-4161-bfc1-fa7ef3562b92",
+      "driver_name": "John Doe",
+      "driver_contact": "123-456-7890",
+      "vehicle_model": "Generic Model",
+      "vehicle_plate": "XYZ 1234",
+      "created_at": "2025-09-04T05:33:48.720517",
+      "updated_at": "2025-09-04T05:33:48.720525"
     },
     {
-        "id": "69f6b0cd-8419-422d-81cb-05c31eb0dd12",
-        "pickup": "123 Main Street",
-        "dropoff": "456 Elm Street",
-        "driver_id": "0be757d5-56d3-46f7-864b-583b4a44bbd0",
-        "rider_id": "cac75c37-0dc4-4c49-8f08-d88db07d1c70",
-        "vehicle_id": "7d328bd3-230f-4b44-9a89-24153381efbf",
-        "booking_status": "cancelled",
-        "fare": 0.0,
-        "distance": 0.0,
-        "payment_status": "refunded",
-        "payment_id": "e4e9ca44-35ee-46a9-b537-bfe4276c0f43",
-        "created_at": "2025-09-04T05:33:48.720890",
-        "updated_at": "2025-09-04T05:33:48.720897"
+      "id": "0TKf95K",
+      "pickup": {
+        "address": "R1",
+        "coordinates": {
+          "lat": 0,
+          "lng": 0
+        }
+      },
+      "dropoff": {
+        "address": "D1",
+        "coordinates": {
+          "lat": 0,
+          "lng": 0
+        }
+      },
+      "driver_id": "unknown-driver",
+      "rider_id": "R201",
+      "vehicle_id": "unknown-vehicle",
+      "booking_status": "requested",
+      "fare": 0,
+      "distance": 0,
+      "payment_mode": "cash",
+      "payment_status": "pending",
+      "payment_id": "574a4376-ebe9-4b52-b3ac-4cb261ca8582",
+      "driver_name": "John Doe",
+      "driver_contact": "123-456-7890",
+      "vehicle_model": "Generic Model",
+      "vehicle_plate": "XYZ 1234",
+      "created_at": "2025-09-15T04:42:24.562127",
+      "updated_at": "2025-09-15T04:42:24.562134"
     },
     {
-        "id": "87379e36-cdf6-41bd-b65d-358ba832e595",
-        "pickup": "123 Main Street",
-        "dropoff": "456 Elm Street",
-        "driver_id": "c9a4213c-c377-4e3f-8cf1-89883f7fefb1",
-        "rider_id": "eb1d3c28-5acc-4701-bb43-61b6c2905aa6",
-        "vehicle_id": "57e0c8e2-346f-40e4-9771-a2d5a61406ca",
-        "booking_status": "no_show",
-        "fare": 0.0,
-        "distance": 0.0,
-        "payment_status": "failed",
-        "payment_id": "5674a8c1-fde1-40ba-90af-8152bad0a659",
-        "created_at": "2025-09-04T05:33:48.721374",
-        "updated_at": "2025-09-04T05:33:48.721380"
-    },
-    {
-        "id": "df6634ee-7d74-4c22-a851-c4e6ba70bd0e",
-        "pickup": "123 Main Street",
-        "dropoff": "456 Elm Street",
-        "driver_id": "595b69a4-04ac-429d-9fb2-dcd2a063b8b5",
-        "rider_id": "5e89c2b7-a33c-463b-a641-e449157fcf6f",
-        "vehicle_id": "128e75bc-9882-463b-bbdf-0f85c2511f48",
-        "booking_status": "in_progress",
-        "fare": null,
-        "distance": 5.2,
-        "payment_status": "pending",
-        "payment_id": "e1b13c48-8ccb-46e1-8914-668e81cd2867",
-        "created_at": "2025-09-04T05:33:48.721413",
-        "updated_at": "2025-09-04T05:33:48.721416"
-    },
-    {
-        "id": "c45e1de8-abd1-421a-9bff-904752cd2398",
-        "pickup": "123 Main Street",
-        "dropoff": "456 Elm Street",
-        "driver_id": "962d0dd5-5c95-400d-89e0-3ecfa7808892",
-        "rider_id": "1c698ce4-7f45-47f6-9368-cef93fb2d88e",
-        "vehicle_id": "65c9f671-df05-459d-b874-01a25f84f719",
-        "booking_status": "requested",
-        "fare": null,
-        "distance": null,
-        "payment_status": "pending",
-        "payment_id": "9a73024d-828f-4fd3-bd14-2cc10941b400",
-        "created_at": "2025-09-04T05:33:48.721445",
-        "updated_at": "2025-09-04T05:33:48.721448"
+      "id": "2604aa5b-2b94-492b-b9d5-0c1c5f182204",
+      "pickup": {
+        "address": "Current Location",
+        "coordinates": {
+          "lat": 11.101743017553499,
+          "lng": 76.9855388935048
+        }
+      },
+      "dropoff": {
+        "address": "sarvanampatti",
+        "coordinates": {
+          "lat": 0,
+          "lng": 0
+        }
+      },
+      "driver_id": null,
+      "rider_id": null,
+      "vehicle_id": null,
+      "booking_status": "pending",
+      "fare": 0,
+      "distance": null,
+      "payment_mode": "cash",
+      "payment_status": "pending",
+      "payment_id": "f8238c2d-1fbb-42ed-ad6d-53d0121e0904",
+      "driver_name": null,
+      "driver_contact": null,
+      "vehicle_model": null,
+      "vehicle_plate": null,
+      "created_at": "2025-09-15T05:37:24.559Z",
+      "updated_at": "2025-09-15T05:37:24.559Z"
     }
-]
+  ]
 }
