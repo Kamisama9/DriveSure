@@ -1,0 +1,131 @@
+CREATE TABLE users (
+    id CHAR(36) NOT NULL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    phone_number VARCHAR(16) UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    middle_name VARCHAR(100),
+    last_name VARCHAR(100),
+    city VARCHAR(100) NOT NULL,
+    state VARCHAR(100) NOT NULL,
+    is_email_verified BOOLEAN DEFAULT FALSE,
+    is_phone_verified BOOLEAN DEFAULT FALSE,
+    role ENUM('rider','driver','admin') NOT NULL,
+    role_description VARCHAR(255),
+    status ENUM('active','suspended','deleted') DEFAULT 'active',
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
+);
+
+CREATE TABLE drivers (
+    id CHAR(36) NOT NULL PRIMARY KEY,
+    user_id CHAR(36) NOT NULL UNIQUE, -- FK to users.id
+
+    aadhar_card CHAR(12) NOT NULL UNIQUE,
+    pan_card CHAR(10) NOT NULL UNIQUE,
+    driver_license VARCHAR(50) NOT NULL UNIQUE,
+    driver_license_expiry DATE,
+
+    profile_photo LONGBLOB NULL,
+    profile_photo_mime VARCHAR(100),
+    profile_photo_size INT,
+
+    is_aadhaar_verified BOOLEAN DEFAULT FALSE,
+    is_pan_verified BOOLEAN DEFAULT FALSE,
+    is_driver_license_verified BOOLEAN DEFAULT FALSE,
+
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) 
+               ON UPDATE CURRENT_TIMESTAMP(6),
+
+    CONSTRAINT chk_pan_format CHECK (pan_card REGEXP '^[A-Z]{5}[0-9]{4}[A-Z]$'),
+    CONSTRAINT chk_aadhaar_format CHECK (aadhar_card REGEXP '^[0-9]{12}$'),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE vehicles (
+    id CHAR(36) NOT NULL PRIMARY KEY,
+    owner_id CHAR(36) NOT NULL, -- FK to drivers.id
+    vehicle_type ENUM('bike','auto','sedan','suv','hatchback') NOT NULL,
+
+    rc_number VARCHAR(50) NOT NULL UNIQUE,
+    puc_number VARCHAR(50),
+    puc_expiry DATE,
+    insurance_policy_number VARCHAR(64),
+    insurance_expiry DATE,
+
+    vehicle_photo LONGBLOB NULL,
+    vehicle_photo_mime VARCHAR(100),
+    vehicle_photo_size INT,
+
+    is_rc_verified BOOLEAN DEFAULT FALSE,
+    is_puc_verified BOOLEAN DEFAULT FALSE,
+    is_insurance_verified BOOLEAN DEFAULT FALSE,
+
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) 
+               ON UPDATE CURRENT_TIMESTAMP(6),
+
+    FOREIGN KEY (owner_id) REFERENCES drivers(id) ON DELETE CASCADE
+);
+
+CREATE TABLE documents (
+    id CHAR(36) PRIMARY KEY,
+
+    owner_type ENUM('driver','vehicle') NOT NULL, -- entity type
+    owner_id CHAR(36) NOT NULL,                  -- driver.id OR vehicle.id
+
+    document_type ENUM(
+        'aadhaar',
+        'pan',
+        'driver_license',
+        'rc',
+        'puc',
+        'insurance'
+    ) NOT NULL,
+
+    document_number VARCHAR(100),    -- e.g. Aadhaar no, RC no
+    file_data LONGBLOB NOT NULL,     -- actual blob
+    file_mime VARCHAR(100),
+    file_size INT,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE verifications (
+    id CHAR(36) PRIMARY KEY,
+    document_id CHAR(36) NOT NULL,
+
+    status ENUM('pending','verified','rejected') DEFAULT 'pending',
+    reviewed_at DATETIME NULL,
+    rejection_reason VARCHAR(255) NULL,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
+    FOREIGN KEY (reviewer_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE location_pricing ( 
+
+    id INT PRIMARY KEY, 
+    city VARCHAR(100) NOT NULL, 
+    state VARCHAR(100) NOT NULL, 
+    price_per_km DECIMAL(10,2) NOT NULL, 
+    created_at DATETIME NOT NULL, 
+    updated_at DATETIME NOT NULL 
+
+); 
+
+CREATE TABLE commission_structure ( 
+
+    id INT PRIMARY KEY, 
+    min_value INT NOT NULL, 
+    max_value INT NOT NULL, 
+    commission_percentage DECIMAL(5,2) NOT NULL, 
+    description VARCHAR(255), 
+    created_at DATETIME NOT NULL, 
+    updated_at DATETIME NOT NULL 
+
+); 

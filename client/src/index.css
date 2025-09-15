@@ -353,3 +353,17 @@
     }
   }
 }
+
+/* Toast notification icon alignment fix */
+.Toastify__toast {
+  align-items: flex-start !important;
+}
+
+.Toastify__toast-icon {
+  margin-top: 0.125rem !important;
+  align-self: flex-start !important;
+}
+
+.Toastify__toast--warning .Toastify__toast-icon {
+  margin-top: 0.50rem !important;
+}

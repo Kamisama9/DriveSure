@@ -1,72 +1,79 @@
 import { useState } from 'react';
-import RightArrow from "../../assets/arrows/right-arrow.png";
 
 const avatar = {
     "path": "/src/assets/testimonials/kickButtowski.avif",
-    "name": "Kick Buttowski"
+    "name": "Administrator"
 }
 
 const AdminSiderBar = ({onSelect}) => {
-  const [isManageUsersOpen, setIsManageUsersOpen] = useState(false);
-  const toggleManageUsers = () => {
-    setIsManageUsersOpen(!isManageUsersOpen);
+  const [activeSelection, setActiveSelection] = useState(null);
+
+  const handleSelect = (selection) => {
+    if (activeSelection === selection) {
+      // If clicking the same menu, deselect it
+      setActiveSelection(null);
+      onSelect?.(null);
+    } else {
+      // Otherwise, select the new menu
+      setActiveSelection(selection);
+      onSelect?.(selection);
+    }
+  };
+
+  const getButtonClass = (selection) => {
+    return `w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600 transition-colors duration-200 ${
+      activeSelection === selection ? 'bg-red-600 text-white' : 'text-white'
+    }`;
   };
 
   return (
       <aside className="shadow-lg bg-[#140604] fixed md:static inset-y-0 left-0 z-50 transition-all duration-300 ease-in-out w-20 md:w-64 hidden md:block">
-        <div className="h-[18vh] border-b">
+        <div className="h-40 border-b border-gray-600 flex flex-col items-center justify-center py-4">
           <img
             src={avatar.path}
-            className="mx-auto mt-6 rounded-full w-24 h-24 object-cover border-4 border-white"
+            className="rounded-full w-24 h-24 object-cover border-4 border-white mb-2"
             alt="user"
           />
-          <div className="text-center text-white font-semibold mt-2">
+          <div className="text-center text-white font-semibold text-sm px-2">
             {avatar.name}
           </div>
         </div>
 
-        {/* Manage Users Section */}
+        {/* Rider Board */}
         <div className="mt-4 text-white">
           <button
-            onClick={toggleManageUsers}
-            className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
+            onClick={() => handleSelect("riderBoard")}
+            className={getButtonClass("riderBoard")}
           >
-            User's Board
+            Rider Board
           </button>
-
-          {isManageUsersOpen && (
-            <div className="ml-4 bg-[#1f0a0a] rounded-md shadow-inner">
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
-                onClick={() => onSelect?.("riderBoard")}
-              >
-                <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
-                Rider Board
-              </div>
-              <div className="flex items-center px-4 py-2 hover:bg-[#2a0f0f] cursor-pointer hover:text-red-600"
-                onClick={() => onSelect?.("driverBoard")}
-              >
-                <img src={RightArrow} alt="arrow" className="w-4 h-4 mr-2" />
-                Driver Board
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Manage Users Section */}
+        {/* Driver Board */}
         <div className="mt-4 text-white">
           <button
-            onClick={() => onSelect?.("Verification")}
-            className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
+            onClick={() => handleSelect("driverBoard")}
+            className={getButtonClass("driverBoard")}
           >
-            Manage Verifications
+            Driver Board
+          </button>
+        </div>
+
+        {/* Verifications */}
+        <div className="mt-4 text-white">
+          <button
+            onClick={() => handleSelect("verification")}
+            className={getButtonClass("verification")}
+          >
+            Document & Verification
           </button>
         </div>
 
         {/* Feedback */}
         <div className="mt-4 text-white">
           <button
-            onClick={() => onSelect?.("feedback")}
-            className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
+            onClick={() => handleSelect("feedback")}
+            className={getButtonClass("feedback")}
           >
             Feedback and Grievances
           </button>
@@ -75,10 +82,20 @@ const AdminSiderBar = ({onSelect}) => {
         {/* Fare */}
         <div className="mt-4 text-white">
           <button
-            onClick={() => onSelect?.("fare")}
-            className="w-full text-left px-4 py-4 hover:bg-[#1f0a0a] font-semibold hover:text-red-600"
+            onClick={() => handleSelect("fare")}
+            className={getButtonClass("fare")}
           >
             Fare Board
+          </button>
+        </div>
+        
+        {/* Transaction Logs */}
+        <div className="mt-4 text-white">
+          <button
+            onClick={() => handleSelect("transaction")}
+            className={getButtonClass("transaction")}
+          >
+            Transactions
           </button>
         </div>
       </aside>
