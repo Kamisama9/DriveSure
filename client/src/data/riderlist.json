@@ -14,7 +14,8 @@
       "role_description": "Regular rider",
       "status": "suspended",
       "created_at": "2025-09-01 10:00:00",
-      "updated_at": "2025-09-05 10:46:31.831"
+      "updated_at": "2025-09-05 10:46:31.831",
+      "bookings": []
     },
     {
       "id": "b2c3d4e5-f6a7-8901-bcde-2345678901bc",
@@ -32,7 +33,8 @@
       "role_description": "Cab driver",
       "status": "active",
       "created_at": "2025-08-25 14:30:00",
-      "updated_at": "2025-09-05 03:53:00.807"
+      "updated_at": "2025-09-05 03:53:00.807",
+      "bookings": []
     },
     {
       "id": "c3d4e5f6-a7b8-9012-cdef-3456789012cd",
@@ -50,6 +52,7 @@
       "role_description": "System administrator",
       "status": "active",
       "created_at": "2025-07-15 09:00:00",
+      "bookings": [],
       "updated_at": "2025-07-15 09:00:00"
     },
     {
@@ -68,6 +71,7 @@
       "role_description": "Occasional rider",
       "status": "suspended",
       "created_at": "2025-06-10 11:45:00",
+      "bookings": [],
       "updated_at": "2025-06-10 11:45:00"
     },
     {
@@ -86,6 +90,7 @@
       "role_description": "Bike driver",
       "status": "active",
       "created_at": "2025-05-20 08:20:00",
+      "bookings": [],
       "updated_at": "2025-05-20 08:20:00"
     },
     {
@@ -104,6 +109,7 @@
       "role_description": "Frequent rider",
       "status": "active",
       "created_at": "2025-04-18 16:00:00",
+      "bookings": [],
       "updated_at": "2025-09-06 10:31:27.959"
     },
     {
@@ -122,6 +128,7 @@
       "role_description": "Auto driver",
       "status": "active",
       "created_at": "2025-03-12 13:15:00",
+      "bookings": [],
       "updated_at": "2025-03-12 13:15:00"
     },
     {
@@ -140,6 +147,7 @@
       "role_description": "New user",
       "status": "deleted",
       "created_at": "2025-02-05 07:30:00",
+      "bookings": [],
       "updated_at": "2025-02-05 07:30:00"
     },
     {
@@ -158,6 +166,7 @@
       "role_description": "Support admin",
       "status": "active",
       "created_at": "2025-01-10 12:00:00",
+      "bookings": [],
       "updated_at": "2025-01-10 12:00:00"
     },
     {
@@ -176,6 +185,7 @@
       "role_description": "Taxi driver",
       "status": "suspended",
       "created_at": "2024-12-20 18:45:00",
+      "bookings": [],
       "updated_at": "2025-09-05 04:28:01.996"
     }
   ]

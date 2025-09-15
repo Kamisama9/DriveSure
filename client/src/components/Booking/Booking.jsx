@@ -193,6 +193,45 @@ export default function Booking() {
     styles: darkMapStyle,
     disableDefaultUI: true,
   };
+  const handleBooking = async () => {
+  console.log("🚀 Confirm Ride button clicked");
+  try {
+    const bookingData = {
+      riderId: "R201",          // rider.json se ek mock user
+      pickup: fromText,
+      drop: toText,
+      vehicleType: "car", // "car" / "bike"
+      paymentMode: payment,
+    };
+
+    console.log("Sending bookingData:", bookingData);
+
+    const res = await fetch("http://localhost:4000/bookings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bookingData),
+    });
+
+    if (!res.ok) {
+      const errMsg = await res.text();
+      throw new Error(errMsg);
+    }
+
+    const data = await res.json();
+    console.log("✅ Booking confirmed:", data);
+   if (data.driver) {
+  alert(`Booking Confirmed! Driver: ${data.driver.name}`);
+} else {
+  alert("Booking Confirmed! ✅");
+}
+
+  } catch (err) {
+    console.error("❌ Booking failed:", err.message);
+    alert("Booking failed: " + err.message);
+  }
+};
+
+
 
   // --- UI ---
   return (
@@ -269,9 +308,9 @@ export default function Booking() {
             </p>
           )}
           <button
-            onClick={() => alert("Ride Confirmed 🚕")}
-            disabled={!fromCoord || !toCoord || !selectedVehicle}
-            className="w-full rounded-lg bg-brand-accent px-4 py-2 font-medium hover:bg-brand-highlight transition disabled:opacity-50"
+            onClick={handleBooking}
+            // disabled={!fromCoord || !toCoord || !selectedVehicle}
+            className="w-full rounded-lg bg-white text-black px-4 py-2 font-medium hover:bg-brand-highlight transition disabled:opacity-50"
           >
             Confirm Ride
           </button>
