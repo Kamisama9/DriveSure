@@ -194,24 +194,47 @@ export default function Booking() {
     disableDefaultUI: true,
   };
   const handleBooking = async () => {
-  console.log("🚀 Confirm Ride button clicked");
-  try {
-    const bookingData = {
-      riderId: "R201",          // rider.json se ek mock user
-      pickup: fromText,
-      drop: toText,
-      vehicleType: "car", // "car" / "bike"
-      paymentMode: payment,
-    };
+    console.log("🚀 Confirm Ride button clicked");
+    try {
+      const bookingData = {
+        id: crypto.randomUUID(), // Generate UUID for booking
+        pickup: {
+          address: fromText,
+          coordinates: fromCoord ? {
+            lat: fromCoord.lat,
+            lng: fromCoord.lng
+          } : { lat: 0, lng: 0 }
+        },
+        dropoff: {
+          address: toText,
+          coordinates: toCoord ? {
+            lat: toCoord.lat,
+            lng: toCoord.lng
+          } : { lat: 0, lng: 0 }
+        },
+        driver_id: null, // Will be assigned by backend
+        rider_id: null, // Should be set from auth context
+        vehicle_id: null, // Will be assigned by backend
+        booking_status: "pending",
+        fare: finalFare,
+        distance: distanceKm,
+        payment_mode: payment,
+        payment_status: "pending",
+        payment_id: crypto.randomUUID(),
+        driver_name: null, // Will be assigned by backend
+        driver_contact: null, // Will be assigned by backend
+        vehicle_model: null, // Will be assigned by backend
+        vehicle_plate: null, // Will be assigned by backend
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
 
-    console.log("Sending bookingData:", bookingData);
-
-    const res = await fetch("http://localhost:4000/bookings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bookingData),
-    });
-
+      const res = await fetch("http://localhost:4000/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookingData),
+      });
+    
     if (!res.ok) {
       const errMsg = await res.text();
       throw new Error(errMsg);

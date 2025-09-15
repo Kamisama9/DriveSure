@@ -40,12 +40,15 @@ const Booking = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await fetch("http://localhost:4000/bookings" );
-        const data = await response.json();
-        console.log("Fetched bookings:", data);
-        setBookings(data || []);
+        const response = await fetch("http://localhost:4000/bookings");
+        const result = await response.json();
+        console.log("Fetched bookings:", result);
+        // Check if data is in the response structure from your API
+        const bookingsData = result.data || result.bookings || result;
+        setBookings(Array.isArray(bookingsData) ? bookingsData : []);
       } catch (error) {
         console.error("Error fetching bookings:", error);
+        setBookings([]);
       }
     };
 
@@ -63,10 +66,10 @@ const Booking = () => {
 
   const handleSearch = () => {
     return bookings.filter((booking) => {
-      // Apply text search
+      // Apply text search with safe access
       const matchesSearch = 
-        booking.pickup.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        booking.dropoff.toLowerCase().includes(searchTerm.toLowerCase());
+        (booking.pickup?.address || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (booking.dropoff?.address || '').toLowerCase().includes(searchTerm.toLowerCase());
 
       // Apply status filter
       const matchesStatus = statusFilter === "all" || booking.booking_status === statusFilter;
@@ -195,11 +198,11 @@ const Booking = () => {
                       <div className="mt-3 space-y-2">
                         <div className="flex items-start gap-2">
                           <div className="w-2 h-2 mt-2 rounded-full bg-green-500"></div>
-                          <p className="text-gray-700">{booking.pickup}</p>
+                          <p className="text-gray-700">{booking.pickup.address}</p>
                         </div>
                         <div className="flex items-start gap-2">
                           <div className="w-2 h-2 mt-2 rounded-full bg-red-500"></div>
-                          <p className="text-gray-700">{booking.dropoff}</p>
+                          <p className="text-gray-700">{booking.dropoff.address}</p>
                         </div>
                       </div>
                     </div>
@@ -240,14 +243,24 @@ const Booking = () => {
                           <div className="w-2 h-2 mt-2 rounded-full bg-green-500 flex-shrink-0"></div>
                           <div>
                             <p className="text-sm text-gray-500">Pickup Location</p>
-                            <p className="text-gray-800">{selectedBooking.pickup}</p>
+                            <p className="text-gray-800">{selectedBooking.pickup.address}</p>
+                            {selectedBooking.pickup.coordinates && (
+                              <p className="text-xs text-gray-500 mt-1">
+                                ({selectedBooking.pickup.coordinates.lat}, {selectedBooking.pickup.coordinates.lng})
+                              </p>
+                            )}
                           </div>
                         </div>
                         <div className="flex items-start gap-3">
                           <div className="w-2 h-2 mt-2 rounded-full bg-red-500 flex-shrink-0"></div>
                           <div>
                             <p className="text-sm text-gray-500">Drop Location</p>
-                            <p className="text-gray-800">{selectedBooking.dropoff}</p>
+                            <p className="text-gray-800">{selectedBooking.dropoff.address}</p>
+                            {selectedBooking.dropoff.coordinates && (
+                              <p className="text-xs text-gray-500 mt-1">
+                                ({selectedBooking.dropoff.coordinates.lat}, {selectedBooking.dropoff.coordinates.lng})
+                              </p>
+                            )}
                           </div>
                         </div>
                         <div className="pt-2">
