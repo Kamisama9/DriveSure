@@ -1,100 +1,136 @@
 {
-  "bookings": [
-    {
-      "id": "249259b5-08ff-4911-a3d7-8b187c407fea",
-      "pickup": {
-        "address": "123 Main Street",
-        "coordinates": {
-          "lat": 0,
-          "lng": 0
-        }
-      },
-      "dropoff": {
-        "address": "456 Elm Street",
-        "coordinates": {
-          "lat": 0,
-          "lng": 0
-        }
-      },
-      "driver_id": "cb9eb4c2-6ac5-4a8b-84fd-e9c1742a6484",
-      "rider_id": "1a3f4433-b682-4e8f-ae27-6cee0fd448e7",
-      "vehicle_id": "v-1a2b3c4d-1111-4ef0-aaaa-000000000001",
-      "booking_status": "completed",
-      "fare": 25.5,
-      "distance": 12.3,
-      "payment_mode": "cash",
-      "payment_status": "paid",
-      "payment_id": "40c771bf-7706-4161-bfc1-fa7ef3562b92",
-      "driver_name": "John Doe",
-      "driver_contact": "123-456-7890",
-      "vehicle_model": "Generic Model",
-      "vehicle_plate": "XYZ 1234",
-      "created_at": "2025-09-04T05:33:48.720517",
-      "updated_at": "2025-09-04T05:33:48.720525"
-    },
-    {
-      "id": "0TKf95K",
-      "pickup": {
-        "address": "R1",
-        "coordinates": {
-          "lat": 0,
-          "lng": 0
-        }
-      },
-      "dropoff": {
-        "address": "D1",
-        "coordinates": {
-          "lat": 0,
-          "lng": 0
-        }
-      },
-      "driver_id": "unknown-driver",
-      "rider_id": "R201",
-      "vehicle_id": "unknown-vehicle",
-      "booking_status": "requested",
-      "fare": 0,
-      "distance": 0,
-      "payment_mode": "cash",
-      "payment_status": "pending",
-      "payment_id": "574a4376-ebe9-4b52-b3ac-4cb261ca8582",
-      "driver_name": "John Doe",
-      "driver_contact": "123-456-7890",
-      "vehicle_model": "Generic Model",
-      "vehicle_plate": "XYZ 1234",
-      "created_at": "2025-09-15T04:42:24.562127",
-      "updated_at": "2025-09-15T04:42:24.562134"
-    },
-    {
-      "id": "2604aa5b-2b94-492b-b9d5-0c1c5f182204",
-      "pickup": {
-        "address": "Current Location",
-        "coordinates": {
-          "lat": 11.101743017553499,
-          "lng": 76.9855388935048
-        }
-      },
-      "dropoff": {
-        "address": "sarvanampatti",
-        "coordinates": {
-          "lat": 0,
-          "lng": 0
-        }
-      },
-      "driver_id": null,
-      "rider_id": null,
-      "vehicle_id": null,
-      "booking_status": "pending",
-      "fare": 0,
-      "distance": null,
-      "payment_mode": "cash",
-      "payment_status": "pending",
-      "payment_id": "f8238c2d-1fbb-42ed-ad6d-53d0121e0904",
-      "driver_name": null,
-      "driver_contact": null,
-      "vehicle_model": null,
-      "vehicle_plate": null,
-      "created_at": "2025-09-15T05:37:24.559Z",
-      "updated_at": "2025-09-15T05:37:24.559Z"
-    }
-  ]
+	"bookings": [
+		{
+			"id": "249259b5-08ff-4911-a3d7-8b187c407fea",
+			"pickup": {
+				"address": "123 Main Street",
+				"coordinates": {
+					"lat": 0,
+					"lng": 0
+				}
+			},
+			"dropoff": {
+				"address": "456 Elm Street",
+				"coordinates": {
+					"lat": 0,
+					"lng": 0
+				}
+			},
+			"driver_id": "cb9eb4c2-6ac5-4a8b-84fd-e9c1742a6484",
+			"rider_id": "1a3f4433-b682-4e8f-ae27-6cee0fd448e7",
+			"vehicle_id": "v-1a2b3c4d-1111-4ef0-aaaa-000000000001",
+			"booking_status": "completed",
+			"fare": 25.5,
+			"distance": 12.3,
+			"payment_mode": "cash",
+			"payment_status": "paid",
+			"payment_id": "40c771bf-7706-4161-bfc1-fa7ef3562b92",
+			"driver_name": "John Doe",
+			"driver_contact": "123-456-7890",
+			"vehicle_model": "Generic Model",
+			"vehicle_plate": "XYZ 1234",
+			"vehicle_type": "sedan",
+			"created_at": "2025-09-04T05:33:48.720517",
+			"updated_at": "2025-09-04T05:33:48.720525"
+		},
+		{
+			"id": "0TKf95K",
+			"pickup": {
+				"address": "R1",
+				"coordinates": {
+					"lat": 0,
+					"lng": 0
+				}
+			},
+			"dropoff": {
+				"address": "D1",
+				"coordinates": {
+					"lat": 0,
+					"lng": 0
+				}
+			},
+			"driver_id": "unknown-driver",
+			"rider_id": "R201",
+			"vehicle_id": "unknown-vehicle",
+			"booking_status": "requested",
+			"fare": 0,
+			"distance": 0,
+			"payment_mode": "cash",
+			"payment_status": "pending",
+			"payment_id": "574a4376-ebe9-4b52-b3ac-4cb261ca8582",
+			"driver_name": "John Doe",
+			"driver_contact": "123-456-7890",
+			"vehicle_model": "Generic Model",
+			"vehicle_plate": "XYZ 1234",
+			"vehicle_type": "sedan",
+			"created_at": "2025-09-15T04:42:24.562127",
+			"updated_at": "2025-09-15T04:42:24.562134"
+		},
+		{
+			"id": "2604aa5b-2b94-492b-b9d5-0c1c5f182204",
+			"pickup": {
+				"address": "Current Location",
+				"coordinates": {
+					"lat": 11.101743017553499,
+					"lng": 76.9855388935048
+				}
+			},
+			"dropoff": {
+				"address": "sarvanampatti",
+				"coordinates": {
+					"lat": 0,
+					"lng": 0
+				}
+			},
+			"driver_id": null,
+			"rider_id": null,
+			"vehicle_id": null,
+			"booking_status": "in_progress",
+			"fare": 0,
+			"distance": null,
+			"payment_mode": "cash",
+			"payment_status": "pending",
+			"payment_id": "f8238c2d-1fbb-42ed-ad6d-53d0121e0904",
+			"driver_name": null,
+			"driver_contact": null,
+			"vehicle_model": null,
+			"vehicle_plate": null,
+			"vehicle_type": "motorcycle",
+			"created_at": "2025-09-15T05:37:24.559Z",
+			"updated_at": "2025-09-15T05:37:24.559Z"
+		},
+		{
+			"id": "78d6d533-a77c-452b-8010-9e173b393b5e",
+			"pickup": {
+				"address": "Current Location",
+				"coordinates": {
+					"lat": 11.10173997022757,
+					"lng": 76.98553817793773
+				}
+			},
+			"dropoff": {
+				"address": "",
+				"coordinates": {
+					"lat": 11.10173997022757,
+					"lng": 76.98553817793773
+				}
+			},
+			"driver_id": null,
+			"rider_id": null,
+			"vehicle_id": null,
+			"booking_status": "cancelled",
+			"fare": 0,
+			"distance": null,
+			"payment_mode": "cash",
+			"payment_status": "pending",
+			"payment_id": "0460a345-050f-4eff-bb5f-8b03f28caa40",
+			"driver_name": null,
+			"driver_contact": null,
+			"vehicle_model": null,
+			"vehicle_plate": null,
+			"vehicle_type": "motorcycle",
+			"created_at": "2025-09-15T09:27:34.605Z",
+			"updated_at": "2025-09-15T09:27:34.606Z"
+		}
+	]
 }
