@@ -20,7 +20,7 @@ const RiderPage = () => {
 			setActiveSection={setActiveSection}
 			navItems={riderNavItems}
 		>
-			{activeSection === "myBooking" && <Bookings />}
+			{activeSection === "myBooking" && <Bookings isRider={true} />}
 			{activeSection === "bookCab" && <Cab />}
 			{activeSection === "grievances" && <Feedback />}
 			{activeSection === "account" && <ManageAccount />}

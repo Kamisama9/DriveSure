@@ -18,12 +18,13 @@ const filterOptions = [
 	{ label: "Booking Status", value: "status" },
 ];
 
-const Bookings = () => {
+const Bookings = ({ isRider = false }) => {
 	const [selectedBooking, setSelectedBooking] = useState(null);
-	const openBooking = (rider) => setSelectedBooking(rider);
+	const openBooking = (booking) => setSelectedBooking(booking);
 	const closeBooking = () => setSelectedBooking(null);
 	const [allBookings, setAllBookings] = useState([]);
 	const [bookings, setBookings] = useState([]);
+	const [rider, setRider] = useState(null);
 	const [filterType, setFilterType] = useState(filterOptions[0].value);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
@@ -118,6 +119,21 @@ const Bookings = () => {
 		}
 	}, [selectedBooking]);
 
+	useEffect(() => {
+		const fetchRider = async () => {
+			try {
+				const riderRes = await fetch(
+					"http://localhost:3005/riders/a1b2c3d4-e5f6-7890-abcd-1234567890ab"
+				);
+				const riderData = await riderRes.json();
+				setRider(riderData);
+			} catch (error) {
+				console.error("Error fetching rider:", error);
+			}
+		};
+		fetchRider();
+	}, []);
+
 	const indexOfLastBooking = currentPage * bookingsPerPage;
 	const indexOfFirstBooking = indexOfLastBooking - bookingsPerPage;
 	const currentBookings = bookings.slice(
@@ -195,18 +211,6 @@ const Bookings = () => {
 							</div>
 						</div>
 					</div>
-
-					{/* <div className="flex flex-col justify-end">
-						<button
-							onClick={fetchBookings}
-							className="px-8 py-3 mt-6 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 focus:ring-4 focus:ring-red-200 focus:outline-none transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center space-x-2"
-						>
-							<span>
-								<Search />
-							</span>
-							<span>Search</span>
-						</button>
-					</div> */}
 				</div>
 			</div>
 
@@ -225,10 +229,17 @@ const Bookings = () => {
 							<div className="flex items-start space-x-4 flex-grow">
 								<div className="flex-shrink-0">
 									<div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-110 overflow-hidden">
-										<img
-											className="object-cover w-full h-full"
-											src="https://tse2.mm.bing.net/th/id/OIP.roHntiwsK2sQ73ICkLPmaAHaE8?rs=1&pid=ImgDetMain&o=7&rm=3"
-										/>
+										{isRider ? (
+											<img
+												className="object-cover w-full h-full"
+												src="https://tse2.mm.bing.net/th/id/OIP.roHntiwsK2sQ73ICkLPmaAHaE8?rs=1&pid=ImgDetMain&o=7&rm=3"
+											/>
+										) : (
+											<span className="text-xl font-bold text-white">
+												{(rider.first_name?.[0] || "").toUpperCase()}
+												{(rider.last_name?.[0] || "").toUpperCase()}
+											</span>
+										)}
 									</div>
 								</div>
 
@@ -374,7 +385,12 @@ const Bookings = () => {
 			)}
 
 			{selectedBooking && (
-				<BookingCards booking={selectedBooking} onClose={closeBooking} />
+				<BookingCards
+					booking={selectedBooking}
+					user={rider}
+					isRider={isRider}
+					onClose={closeBooking}
+				/>
 			)}
 		</>
 	);

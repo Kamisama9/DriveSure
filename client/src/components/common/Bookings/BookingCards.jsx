@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { formatDateSafe } from "../../../utils/DateUtil";
 import {
 	Check,
@@ -8,29 +7,9 @@ import {
 	X,
 } from "lucide-react";
 
-const BookingCards = ({ booking, onClose }) => {
-	const [rider, setRider] = useState({});
-
-	useEffect(() => {
-		const fetchRider = async () => {
-			try {
-				const response = await fetch(
-					"http://localhost:3005/riders/a1b2c3d4-e5f6-7890-abcd-1234567890ab"
-				);
-				const data = await response.json();
-				setRider(data);
-			} catch (error) {
-				console.error("Error fetching rider:", error);
-			}
-		};
-		fetchRider();
-	}, []);
-
+const BookingCards = ({ booking, user, isRider, onClose }) => {
 	return (
-		<div
-			className="fixed inset-0 z-50 bg-gradient-to-br from-black/50 to-black/30 backdrop-blur-md flex items-center justify-center p-4"
-			onClick={onClose}
-		>
+		<div className="fixed inset-0 z-50 bg-gradient-to-br from-black/50 to-black/30 backdrop-blur-md flex items-center justify-center p-4">
 			<div className="bg-white rounded-2xl shadow-2xl border border-gray-100 w-full max-w-3xl max-h-[90vh] overflow-y-auto no-scrollbar relative transform transition-all duration-300 scale-100 hover:scale-[1.01]">
 				<div className="p-8 bg-gradient-to-r from-blue-50 to-indigo-50">
 					<button
@@ -50,10 +29,10 @@ const BookingCards = ({ booking, onClose }) => {
 
 					<div className="text-center mb-8">
 						<div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4 shadow-lg overflow-hidden">
-							<img
-								className="object-cover w-full h-full"
-								src="https://tse2.mm.bing.net/th/id/OIP.roHntiwsK2sQ73ICkLPmaAHaE8?rs=1&pid=ImgDetMain&o=7&rm=3"
-							/>
+							<span className="text-xl font-bold text-white">
+								{(user.first_name?.[0] || "").toUpperCase()}
+								{(user.last_name?.[0] || "").toUpperCase()}
+							</span>
 						</div>
 						<p className="text-gray-600 mt-2 text-lg">
 							{formatDateSafe(booking.created_at, {
@@ -87,19 +66,19 @@ const BookingCards = ({ booking, onClose }) => {
 
 						<div className="group bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300">
 							<label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 group-hover:text-gray-600">
-								Rider Name
+								{isRider ? "Driver Name" : "Rider Name"}
 							</label>
 							<div className="text-gray-900 font-medium text-base">
-								{rider.first_name} {rider.last_name}
+								{user.first_name} {user.last_name}
 							</div>
 						</div>
 
 						<div className="group bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300">
 							<label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 group-hover:text-gray-600">
-								Rider Mobile Number
+								{isRider ? "Driver Mobile Number" : "Rider Mobile Number"}
 							</label>
 							<div className="text-gray-900 font-medium text-base">
-								{rider.phone_number}
+								{user.phone_number}
 							</div>
 						</div>
 
